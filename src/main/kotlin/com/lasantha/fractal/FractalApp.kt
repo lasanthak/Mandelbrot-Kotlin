@@ -5,8 +5,8 @@ import kotlinx.coroutines.*
 
 object FractalApp {
     // 1920 x 1080
-    private const val width = 1920
-    private const val height = 1080
+//    private const val width = 1920
+//    private const val height = 1080
 
     //    val range = MatrixRange(-2.0, 0.2, -1.2, 1.2)
 //    val range = MatrixRange(0.16125, 0.17725, 0.638438, 0.646438)
@@ -19,8 +19,8 @@ object FractalApp {
 //    private val range = MatrixRange(0.1630165744064358, 0.16301663205161185, 0.6362499602626672, 0.6362499926880788)
 
     // 2880 x 1800
-//    private const val width = 2880
-//    private const val height = 1800
+    private const val width = 2880
+    private const val height = 1800
 //    private val range = MatrixRange(0.16301657433333333, 0.163016681, 0.6362499561111111, 0.6362500227777779)
 //    private val range = MatrixRange(0.16302385913541667, 0.16303786691319447, 0.6362058171180556, 0.6362145719791666)
     private val range = MatrixRange(0.16303113122377195, 0.16303113834046036, 0.6362083869319972, 0.6362083909351345)
