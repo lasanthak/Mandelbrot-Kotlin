@@ -1,4 +1,4 @@
-package kotlin.com.lasantha.fractal
+package com.lasantha.fractal
 
 object Mandelbrot {
     private const val maxIterations = 30000

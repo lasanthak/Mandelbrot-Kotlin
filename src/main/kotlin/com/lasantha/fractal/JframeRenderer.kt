@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package kotlin.com.lasantha.fractal
+package com.lasantha.fractal
 
 import java.awt.*
 import java.awt.event.KeyEvent

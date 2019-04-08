@@ -1,4 +1,4 @@
-package kotlin.com.lasantha.fractal
+package com.lasantha.fractal
 
 class MyTimer(private val name: String) {
     private val start = System.currentTimeMillis()

@@ -1,4 +1,4 @@
-package kotlin.com.lasantha.fractal
+package com.lasantha.fractal
 
 class IntMatrix(
     override val pixelWidth: Int,
