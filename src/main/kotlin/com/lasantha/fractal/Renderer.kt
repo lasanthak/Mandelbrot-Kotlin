@@ -1,5 +1,4 @@
-package com.lasantha.fractal
-
+package kotlin.com.lasantha.fractal
 
 interface Renderer {
     val width: Int

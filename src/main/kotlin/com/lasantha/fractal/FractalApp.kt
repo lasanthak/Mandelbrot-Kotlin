@@ -1,9 +1,6 @@
-package com.lasantha.fractal
+package kotlin.com.lasantha.fractal
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 
 object FractalApp {
@@ -37,14 +34,15 @@ object FractalApp {
     }
 
     private fun doCalculation() = runBlocking {
-//        val calculate = { r: MatrixRange<Double> -> Mandelbrot.calcMandelbrot(r) }
+        //        val calculate = { r: MatrixRange<Double> -> Mandelbrot.calcMandelbrot(r) }
         val calculate = { r: MatrixRange<Double> -> Mandelbrot.calcMandelbrotDeep(r, 5) }
 
         val jobs = mutableListOf<Job>()
         val timer = MyTimer("Calculation")
 
-        repeat(height) { i -> // Each row is calculated in a single coroutine
-            jobs += launch(Dispatchers.Default) {
+        repeat(height) { i ->
+            // Each row is calculated in a single coroutine
+            jobs += GlobalScope.launch(Dispatchers.Default) {
                 doubleMatrix.transform(0, width - 1, i, i, calculate)
             }
         }

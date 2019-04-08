@@ -1,8 +1,8 @@
-package com.lasantha.fractal
+package kotlin.com.lasantha.fractal
 
 object Mandelbrot {
-    const val maxIterations = 30000
-    const val excapeRadiusSquare = 100.0 * 100.0
+    private const val maxIterations = 30000
+    private const val escapeRadiusSquare = 100.0 * 100.0
 
     /*
     * Complex number C is in the Mandelbrot set if this is bounded for very large n, starting with Z0.
@@ -47,7 +47,7 @@ object Mandelbrot {
             yy = y * y
             y = (2 * x * y) + yc
             x = xx - yy + xc
-        } while (++iterations < maxIterations && (xx + yy) < excapeRadiusSquare)
+        } while (++iterations < maxIterations && (xx + yy) < escapeRadiusSquare)
 
         return if (iterations >= maxIterations) -1 else iterations
     }

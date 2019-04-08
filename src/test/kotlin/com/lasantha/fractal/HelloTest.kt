@@ -1,4 +1,4 @@
-package com.lasantha.fractal
+package kotlin.com.lasantha.fractal
 
 import org.junit.Test
 import kotlin.test.assertEquals

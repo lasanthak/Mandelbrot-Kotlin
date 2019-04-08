@@ -1,7 +1,7 @@
-package com.lasantha.fractal
+package kotlin.com.lasantha.fractal
 
-class MyTimer(val name: String) {
-    val start = System.currentTimeMillis()
+class MyTimer(private val name: String) {
+    private val start = System.currentTimeMillis()
 
     fun tick() {
         println("$name time: ${System.currentTimeMillis() - start} ms")
