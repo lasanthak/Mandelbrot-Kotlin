@@ -3,7 +3,7 @@
 
 Simple library to generate fractal images using Kotlin. And there is a sample implementation of Mandelbrot set visualization calculated using coroutines.
 
-**Author**: @lasanthak
+**Author**: [Lasantha Kularatne](https://www.linkedin.com/in/lasanthak)
 
 ## Samples
 ![1200 x 1080](/samples/1554616566994.png)
