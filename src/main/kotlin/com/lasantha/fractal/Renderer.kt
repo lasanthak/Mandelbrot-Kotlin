@@ -1,5 +1,7 @@
 package com.lasantha.fractal
 
+import com.lasantha.fractal.matrix.Matrix
+
 interface Renderer {
     val width: Int
     val height: Int
@@ -18,7 +20,6 @@ class SimpleRenderer(
         matrix.foreach { value, x, y ->
             print(
                 when (value) {
-                    -1 -> "."
                     in 0..255 -> value.toString()
                     else -> "#"
                 }

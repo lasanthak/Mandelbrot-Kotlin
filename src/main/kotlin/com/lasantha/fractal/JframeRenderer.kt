@@ -2,6 +2,7 @@
 
 package com.lasantha.fractal
 
+import com.lasantha.fractal.matrix.Matrix
 import java.awt.*
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
@@ -14,7 +15,6 @@ import javax.imageio.ImageIO
 import javax.swing.JFrame
 import javax.swing.JOptionPane
 import kotlin.math.round
-
 
 class JFrameRenderer(
     override val width: Int,
@@ -32,7 +32,6 @@ class JFrameRenderer(
 
         matrix.foreach { value, x, y ->
             val grayCol = 255 - when (value) {
-                -1 -> 0
                 in 0..255 -> value
                 in 256..450 -> 510 - value
                 in 451..531 -> ((571 - value) / 2.toFloat()).toInt()

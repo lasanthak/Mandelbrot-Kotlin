@@ -1,41 +1,42 @@
 package com.lasantha.fractal
 
+import com.lasantha.fractal.matrix.DoubleMatrix
+import com.lasantha.fractal.matrix.MatrixRange
 import kotlinx.coroutines.*
+import java.lang.Double.max
 
 
 object FractalApp {
-    // 1920 x 1080
+
+    private const val maxIterations = 30000
+    private const val escapeRadius = 100.0
+    private const val midPointCountSqrt = 5
+
 //    private const val width = 1920
 //    private const val height = 1080
-
-    //    val range = MatrixRange(-2.0, 0.2, -1.2, 1.2)
-//    val range = MatrixRange(0.16125, 0.17725, 0.638438, 0.646438)
-//    val range = MatrixRange(0.3495, 0.3514, 0.3495, 0.3505)
-//    val range = MatrixRange(0.35045, 0.35065, 0.3505, 0.3506)
-//    val range = MatrixRange(0.16299615, 0.16312222, 0.6361975, 0.6362611)
-//    val range = MatrixRange(0.16304703763020836, 0.16306104540798613, 0.6362304839392361, 0.6362383633142361)
-//    private val range = MatrixRange(0.16305052498321762, 0.16305519424247691, 0.6362338326736111, 0.6362364591319445)
-//    private val range = MatrixRange(0.16305239959455708, 0.16305239983178005, 0.6362354616846979, 0.6362354618181358)
-//    private val range = MatrixRange(0.1630165744064358, 0.16301663205161185, 0.6362499602626672, 0.6362499926880788)
-
-    // 2880 x 1800
     private const val width = 2880
     private const val height = 1800
-//    private val range = MatrixRange(0.16301657433333333, 0.163016681, 0.6362499561111111, 0.6362500227777779)
-//    private val range = MatrixRange(0.16302385913541667, 0.16303786691319447, 0.6362058171180556, 0.6362145719791666)
-    private val range = MatrixRange(0.16303113122377195, 0.16303113834046036, 0.6362083869319972, 0.6362083909351345)
 
-    private val doubleMatrix = DoubleMatrix(width, height).applyRange(range)
+    private val jFrameRenderer = JFrameRenderer(width, height, "Mandelbrot Set")
 
-    private val jFrameRenderer = JFrameRenderer(width, height, "Mandelbrot")
+//    private var matrix = DoubleMatrix(width, height, -2.0, 1.25, 0.0025)
+//    private var matrix = DoubleMatrix(width, height, -1.61375, 0.48624999999999996, 6.25E-4)
+//    private var matrix = DoubleMatrix(width, height, -1.3728124999999998, 0.43531249999999994, 1.5625E-4)
+//    private var matrix = DoubleMatrix(width, height, -1.2338281249999996, 0.3346093749999999, 3.90625E-5)
+    private var matrix = DoubleMatrix(width, height, -1.2146679687499997, 0.3211523437499999, 9.765625E-6)
+
+//    private var matrix = DoubleMatrix(width, height, -0.19554687499999995, -0.19554687499999995, 3.906250000000001E-5)
+//    private var matrix = DoubleMatrix(width, height, -0.167699936106801, -0.167699936106801, 3.7252903000038906E-11)
+//    private var matrix = DoubleMatrix(width, height, -0.16769990341737862, -0.16769990341737862, 9.313225750009727E-12)
 
     init {
         jFrameRenderer.setActionHandler(::doClickAction)
     }
 
     private fun doCalculation() = runBlocking {
-        //        val calculate = { r: MatrixRange<Double> -> Mandelbrot.calcMandelbrot(r) }
-        val calculate = { r: MatrixRange<Double> -> Mandelbrot.calcMandelbrotDeep(r, 5) }
+        val calculate = {
+                r: MatrixRange<Double> -> Mandelbrot.calcMandelbrotDeep(r, midPointCountSqrt, maxIterations, escapeRadius)
+        }
 
         val jobs = mutableListOf<Job>()
         val timer = MyTimer("Calculation")
@@ -43,7 +44,7 @@ object FractalApp {
         repeat(height) { i ->
             // Each row is calculated in a single coroutine
             jobs += GlobalScope.launch(Dispatchers.Default) {
-                doubleMatrix.transform(0, width - 1, i, i, calculate)
+                matrix.transform(0, width - 1, i, i, calculate)
             }
         }
 
@@ -51,15 +52,23 @@ object FractalApp {
         jobs.forEach { it.join() }
         timer.tick()
 
-        jFrameRenderer.render(doubleMatrix)
+        jFrameRenderer.render(matrix)
     }
 
     private fun doClickAction(x: Int, y: Int) {
-        val r1 = doubleMatrix.toRange(x, y)
-        val r2 = doubleMatrix.toRange(x + width / 4, y + height / 4)
+        val r1 = matrix.pixelToRange(x, y)
+        val r2 = matrix.pixelToRange(x + width / 4, y + height / 4)
 
-        println("MatrixRange(${r1.x1}, ${r2.x1}, ${r1.y1}, ${r2.y1})")
-        doubleMatrix.applyRange(MatrixRange(r1.x1, r2.x1, r1.y1, r2.y1))
+        val x1 = (r1.x1 + r1.x2) / 2
+        val y1 = (r1.y1 + r1.y2) / 2
+
+        val x2 = (r2.x1 + r2.x2) / 2
+        val y2 = (r2.y1 + r2.y2) / 2
+
+        val pixelSize = max((x2 - x1) / width, (y1 - y2) / height);
+
+        println("DoubleMatrix(${width}, ${height}, ${x1}, ${y1}, ${pixelSize})")
+        matrix = DoubleMatrix(width, height, x1, y1, pixelSize)
 
         doRun()
     }

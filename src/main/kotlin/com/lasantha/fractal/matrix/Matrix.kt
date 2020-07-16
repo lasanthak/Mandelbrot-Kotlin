@@ -1,11 +1,14 @@
 @file:Suppress("unused")
 
-package com.lasantha.fractal
+package com.lasantha.fractal.matrix
 
 
-interface Matrix<T> {
-    val pixelWidth: Int // width > 0
-    val pixelHeight: Int // height > 0
+interface Matrix<out T : Number> {
+    val pixelWidth: Int // Integer width of matrix, > 0
+    val pixelHeight: Int // Integer height of matrix, > 0
+    val rangeX1: T // X of top left point in the range
+    val rangeY1: T // Y of top left point in the range
+    val rangePixelSize: T // Single pixel size represented in the range
 
     /**
      * xPixel: 0 to pixelWidth - 1
@@ -52,7 +55,7 @@ interface Matrix<T> {
     fun transform(xFrom: Int, xTo: Int, yFrom: Int, yTo: Int, f: (range: MatrixRange<T>) -> Int) {
         for (y in yFrom..yTo) {
             for (x in xFrom..xTo) {
-                set(x, y, f(toRange(x, y)))
+                set(x, y, f(pixelToRange(x, y)))
             }
         }
     }
@@ -70,21 +73,13 @@ interface Matrix<T> {
         }
     }
 
-    /**
-     * Applies the given range. This will affect the result of toRange function
-     */
-    fun applyRange(r: MatrixRange<T>): Matrix<T> {
-        return this
-    }
-
-    fun toRange(xPixel: Int, yPixel: Int): MatrixRange<T>
+    fun pixelToRange(xPixel: Int, yPixel: Int): MatrixRange<T>
 }
 
 /**
  * x1: smallest possible x value for the range
  * x2: largest possible x value for the range
- * y1: smallest possible y value for the range
- * y2: largest possible y value for the range
+ * y1: largest possible y value for the range
+ * y2: smallest possible y value for the range
  */
-data class MatrixRange<T>(val x1: T, val x2: T, val y1: T, val y2: T)
-
+data class MatrixRange<out T : Number>(val x1: T, val x2: T, val y1: T, val y2: T)
