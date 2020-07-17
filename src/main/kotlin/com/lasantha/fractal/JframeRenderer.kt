@@ -14,7 +14,6 @@ import java.io.IOException
 import javax.imageio.ImageIO
 import javax.swing.JFrame
 import javax.swing.JOptionPane
-import kotlin.math.round
 
 class JFrameRenderer(
     override val width: Int,
@@ -31,14 +30,10 @@ class JFrameRenderer(
         val g = frame.image.graphics
 
         matrix.foreach { value, x, y ->
-            val grayCol = 255 - when (value) {
-                in 0..255 -> value
-                in 256..450 -> 510 - value
-                in 451..531 -> ((571 - value) / 2.toFloat()).toInt()
-                in 532..559 -> ((589 - value) / 3.toFloat()).toInt()
-                in 560..576 -> ((596 - value) / 4.toFloat()).toInt()
-                else -> round(value / 10.0).toInt() % 256
-            }
+            val d = value / 255
+            val m = value % 255
+
+            val grayCol = if (d % 2 == 0) m else (255 - m)
             g.color = Color(grayCol, grayCol, grayCol)
             g.fillRect(x, y, 1, 1)
         }
@@ -63,7 +58,7 @@ private class KJFrame(width: Int, height: Int, titleText: String) : JFrame(title
     val image = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
 
     init {
-        this.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        this.defaultCloseOperation = EXIT_ON_CLOSE
         this.bounds = Rectangle(0, 0, width, height)
 
         this.addKeyListener(KJFrameKeyListener(this, ::saveImage))
@@ -94,19 +89,19 @@ private class KJFrame(width: Int, height: Int, titleText: String) : JFrame(title
 
 private class KJFrameKeyListener(private val parent: Component, private val doSave: () -> Unit) : KeyListener {
     override fun keyTyped(e: KeyEvent) {
+        if (e.keyChar == 'S') {
+            doSave()
+        }
+
+        if (e.keyChar == '?') {
+            JOptionPane.showMessageDialog(parent, "Press S to save")
+        }
     }
 
     override fun keyReleased(e: KeyEvent) {
     }
 
     override fun keyPressed(e: KeyEvent) {
-        val special = e.isMetaDown || e.isControlDown
-        if (special && (e.keyChar == 's' || e.keyChar == 'S')) {
-            doSave()
-        }
-        if (e.keyChar == '?') {
-            JOptionPane.showMessageDialog(parent, "Press Ctrl + s / Cmd + s to save")
-        }
     }
 }
 

@@ -7,36 +7,28 @@ import java.lang.Double.max
 
 
 object FractalApp {
-
-    private const val maxIterations = 30000
-    private const val escapeRadius = 100.0
-    private const val midPointCountSqrt = 5
-
-//    private const val width = 1920
-//    private const val height = 1080
-    private const val width = 2880
-    private const val height = 1800
+    private const val width = 1920
+    private const val height = 1080
+//    private const val width = 2880
+//    private const val height = 1800
 
     private val jFrameRenderer = JFrameRenderer(width, height, "Mandelbrot Set")
 
-//    private var matrix = DoubleMatrix(width, height, -2.0, 1.25, 0.0025)
+    private var matrix = DoubleMatrix(width, height, -3.0, 1.25, 0.0025)
+//    private var matrix = DoubleMatrix(width, height, -1.2121240234374997, 0.3170654296874999, 2.44140625E-6)
 //    private var matrix = DoubleMatrix(width, height, -1.61375, 0.48624999999999996, 6.25E-4)
 //    private var matrix = DoubleMatrix(width, height, -1.3728124999999998, 0.43531249999999994, 1.5625E-4)
 //    private var matrix = DoubleMatrix(width, height, -1.2338281249999996, 0.3346093749999999, 3.90625E-5)
-    private var matrix = DoubleMatrix(width, height, -1.2146679687499997, 0.3211523437499999, 9.765625E-6)
+//    private var matrix = DoubleMatrix(width, height, -1.2146679687499997, 0.3211523437499999, 9.765625E-6)
 
-//    private var matrix = DoubleMatrix(width, height, -0.19554687499999995, -0.19554687499999995, 3.906250000000001E-5)
-//    private var matrix = DoubleMatrix(width, height, -0.167699936106801, -0.167699936106801, 3.7252903000038906E-11)
-//    private var matrix = DoubleMatrix(width, height, -0.16769990341737862, -0.16769990341737862, 9.313225750009727E-12)
 
     init {
         jFrameRenderer.setActionHandler(::doClickAction)
     }
 
     private fun doCalculation() = runBlocking {
-        val calculate = {
-                r: MatrixRange<Double> -> Mandelbrot.calcMandelbrotDeep(r, midPointCountSqrt, maxIterations, escapeRadius)
-        }
+        val mandelbrot = Mandelbrot(2000, 1000.0, 5)
+        val calculate = { r: MatrixRange<Double> -> mandelbrot.calcMandelbrotDeep(r) }
 
         val jobs = mutableListOf<Job>()
         val timer = MyTimer("Calculation")
@@ -69,7 +61,6 @@ object FractalApp {
 
         println("DoubleMatrix(${width}, ${height}, ${x1}, ${y1}, ${pixelSize})")
         matrix = DoubleMatrix(width, height, x1, y1, pixelSize)
-
         doRun()
     }
 

@@ -83,3 +83,4 @@ interface Matrix<out T : Number> {
  * y2: smallest possible y value for the range
  */
 data class MatrixRange<out T : Number>(val x1: T, val x2: T, val y1: T, val y2: T)
+
