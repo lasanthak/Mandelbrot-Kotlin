@@ -18,19 +18,19 @@ class Mandelbrot(private val maxN: Int,
         val xPixW = (range.x2 - range.x1) / samplesSqrt
         val yPixH = (range.y1 - range.y2) / samplesSqrt
 
-        val x1Vals = DoubleArray(samplesSqrt + 1)
-        val y1Vals = DoubleArray(samplesSqrt + 1)
-        x1Vals[0] = range.x1
-        y1Vals[0] = range.y1
+        val xMarkers = DoubleArray(samplesSqrt + 1)
+        val yMarkers = DoubleArray(samplesSqrt + 1)
+        xMarkers[0] = range.x1
+        yMarkers[0] = range.y1
         for (i in 1..samplesSqrt) { // nSqrt inclusive
-            x1Vals[i] = x1Vals[i - 1] + xPixW
-            y1Vals[i] = y1Vals[i - 1] - yPixH
+            xMarkers[i] = xMarkers[i - 1] + xPixW
+            yMarkers[i] = yMarkers[i - 1] - yPixH
         }
 
         for (i in 0 until samplesSqrt) {
             for (j in 0 until samplesSqrt) {
-                val pointRange = MatrixRange(x1Vals[i], x1Vals[i + 1], y1Vals[j], y1Vals[j + 1])
-                values[i * samplesSqrt + j] = calculatePoint(pointRange)
+                val rangeForPoint = MatrixRange(xMarkers[i], xMarkers[i + 1], yMarkers[j], yMarkers[j + 1])
+                values[i * samplesSqrt + j] = calculatePoint(rangeForPoint)
             }
         }
 
@@ -50,12 +50,13 @@ class Mandelbrot(private val maxN: Int,
         var yy: Double
         var rSquare: Double
         do {
+            n++
             xx = x * x
             yy = y * y
             y = (2 * x * y) + yc
             x = xx - yy + xc
             rSquare = xx + yy
-        } while (++n < maxN && rSquare < escapeRSquare)
+        } while (n < maxN && rSquare < escapeRSquare)
 
         return Result(n, rSquare)
     }

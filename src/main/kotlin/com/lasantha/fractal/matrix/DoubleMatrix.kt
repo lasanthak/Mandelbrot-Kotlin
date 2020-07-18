@@ -1,14 +1,14 @@
 package com.lasantha.fractal.matrix
 
 class DoubleMatrix(
-    override val pixelWidth: Int,
-    override val pixelHeight: Int,
+    override val widthInPixels: Int,
+    override val heightInPixels: Int,
     override val rangeX1: Double,
     override val rangeY1: Double,
     override val rangePixelSize: Double
-) : Matrix<Double> {
+) : Matrix<Double, Int> {
 
-    private val data = Array(pixelHeight) { IntArray(pixelWidth) } // data[y][x]
+    private val data = Array(heightInPixels) { IntArray(widthInPixels) } // data[y][x]
 
     override fun get(xPixel: Int, yPixel: Int): Int {
         return data[yPixel][xPixel]

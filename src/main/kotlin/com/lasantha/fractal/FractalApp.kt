@@ -7,7 +7,7 @@ import kotlin.math.*
 
 
 object FractalApp {
-    private const val twoPI = 2* PI
+    private const val twoPI = 2 * PI
 
     private const val w = 1920
     private const val h = 1080
@@ -22,7 +22,12 @@ object FractalApp {
 //    private var matrix = DoubleMatrix(w, h, -1.21466796875, 0.32115234375, 9.765625E-6)
 //    private var matrix = DoubleMatrix(w, h, -1.927921142578, 3.7231445312492777E-4, 6.103515625E-7)
 //    private var matrix = DoubleMatrix(w, h, -1.9353922718009557, -2.5250200999817516E-6, 1.455191580660801E-13)
-    private var matrix = DoubleMatrix(w, h, -1.93542839050293, 2.0065307617046905E-5, 3.8146972656388775E-8)
+//    private var matrix = DoubleMatrix(w, h, -1.93542839050293, 2.0065307617046905E-5, 3.8146972656388775E-8)
+//    private var matrix = DoubleMatrix(w, h, 0.4379185144138036, 0.3418942276032618, 3.556825615928742E-17)
+//    private var matrix = DoubleMatrix(w, h, 0.43791851441382945, 0.34189422760324895, 8.90491384334761E-18)
+//    private var matrix = DoubleMatrix(w, h, 0.4379185144116993, 0.3418942276044753, 2.273747034275141E-15)
+//    private var matrix = DoubleMatrix(w, h, 0.4379185144132852, 0.3418942276035124, 5.684753079793625E-16)
+    private var matrix = DoubleMatrix(w, h, 0.4437215614318849, 0.3642622566223145, 9.53674316410362E-9)
 
     private val jFrameRenderer = JFrameRenderer(w, h, "Mandelbrot Set")
     init {
@@ -33,7 +38,7 @@ object FractalApp {
         val maxN = 2000
         val escapeRadius = 1000.0
         val samplesSqrt = 5
-        val smoothFactor = 4.3
+        val blendingFactor = 111 //150, 4.3
         val mandelbrot = Mandelbrot(maxN, escapeRadius, samplesSqrt)
 
         val jobs = mutableListOf<Job>()
@@ -49,7 +54,7 @@ object FractalApp {
                     mandelbrot.calculate(range) { n, rSquare ->
                         if (n < maxN) {
                             val v = ln(rSquare) / 2.0.pow(n)
-                            value = round(127.5 * (1 + cos(twoPI * ln(v) / smoothFactor))).toInt()
+                            value = round(127.5 * (1 + cos(twoPI * ln(v) / blendingFactor))).toInt()
                         }
                     }
                     matrix.set(x, y, value)
@@ -74,7 +79,7 @@ object FractalApp {
         val x2 = (r2.x1 + r2.x2) / 2
         val y2 = (r2.y1 + r2.y2) / 2
 
-        val pixelSize = max((x2 - x1) / w, (y1 - y2) / h);
+        val pixelSize = max((x2 - x1) / w, (y1 - y2) / h)
 
         println("DoubleMatrix(w, h, ${x1}, ${y1}, ${pixelSize})")
         matrix = DoubleMatrix(w, h, x1, y1, pixelSize)

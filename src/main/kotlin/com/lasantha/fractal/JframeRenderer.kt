@@ -22,24 +22,20 @@ class JFrameRenderer(
     override val width: Int,
     override val height: Int,
     override val titleText: String
-) : Renderer {
+) : Renderer<Int> {
 
     private val frame = KJFrame(width, height, titleText)
     private val rectangle = Rectangle(0, 0, width/4, height/4)
 
     private var doZoomIn: ((x: Int, y: Int) -> Unit)? = null
 
-    override fun render(matrix: Matrix<*>) {
+    override fun render(matrix: Matrix<*, Int>) {
         verifyDimensions(matrix)
         val timer = MyTimer("JFrame renderer")
         val g = frame.image.graphics
 
-        matrix.foreach { value, x, y ->
-            val d = value / 255
-            val m = value % 255
-
-            val grayCol = if (d % 2 == 0) m else (255 - m)
-            g.color = Color(grayCol, grayCol, grayCol)
+        matrix.forEach { value, x, y ->
+            g.color = Color(value, value, value)
             g.fillRect(x, y, 1, 1)
         }
 
@@ -51,8 +47,8 @@ class JFrameRenderer(
         this.doZoomIn = doZoomIn
     }
 
-    private fun verifyDimensions(matrix: Matrix<*>) {
-        if (matrix.pixelWidth > width || matrix.pixelHeight > height) {
+    private fun verifyDimensions(matrix: Matrix<*, Int>) {
+        if (matrix.widthInPixels > width || matrix.heightInPixels > height) {
             throw IllegalArgumentException("Invalid dimensions")
         }
     }
