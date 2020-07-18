@@ -1,13 +1,11 @@
 package com.lasantha.fractal
 
 import com.lasantha.fractal.matrix.MatrixRange
-import kotlin.math.*
 
 class Mandelbrot(private val maxN: Int,
                  private val escapeRadius: Double,
                  private val samplesSqrt: Int) {
 
-    private val twoPI = 2*PI
     private val escapeRSquare = escapeRadius * escapeRadius
 
     /*
@@ -15,8 +13,8 @@ class Mandelbrot(private val maxN: Int,
     * Zn+1 = Zn ^ 2 + Zc
     * See https://en.wikipedia.org/wiki/Mandelbrot_set
      */
-    fun calcMandelbrotDeep(range: MatrixRange<Double>): Int {
-        val values = IntArray(samplesSqrt * samplesSqrt)
+    fun calculate(range: MatrixRange<Double>, handler: (n: Int, rSquare: Double) -> Unit) {
+        val values = Array<Result?>(samplesSqrt * samplesSqrt) { null }
         val xPixW = (range.x2 - range.x1) / samplesSqrt
         val yPixH = (range.y1 - range.y2) / samplesSqrt
 
@@ -32,14 +30,15 @@ class Mandelbrot(private val maxN: Int,
         for (i in 0 until samplesSqrt) {
             for (j in 0 until samplesSqrt) {
                 val pointRange = MatrixRange(x1Vals[i], x1Vals[i + 1], y1Vals[j], y1Vals[j + 1])
-                values[i * samplesSqrt + j] = calcMandelbrot(pointRange)
+                values[i * samplesSqrt + j] = calculatePoint(pointRange)
             }
         }
 
-        return median(values)
+        val result = median(values)
+        handler.invoke(result.n, result.rSquare)
     }
 
-    fun calcMandelbrot(range: MatrixRange<Double>): Int {
+    private fun calculatePoint(range: MatrixRange<Double>): Result {
         // Take the mid point as Zc
         val xc = (range.x1 + range.x2) / 2
         val yc = (range.y1 + range.y2) / 2
@@ -58,19 +57,15 @@ class Mandelbrot(private val maxN: Int,
             rSquare = xx + yy
         } while (++n < maxN && rSquare < escapeRSquare)
 
-        if (n >= maxN) {
-            return 0
-        }
-
-        val v = ln(rSquare) / 2.0.pow(n)
-        n = round(127.5 * (1 + cos(twoPI * ln(v) / 4.9))).toInt()
-        return min(maxN, n)
+        return Result(n, rSquare)
     }
 
-    private fun median(array: IntArray): Int {
-        val ls = array.sorted()
-        val halfSize = ls.size / 2
-        return if (ls.size % 2 == 1) ls[halfSize] else ls[halfSize - 1]
+    private fun median(array: Array<Result?>): Result {
+        array.sortBy { it!!.n }
+        val halfSize = array.size / 2
+        return if (array.size % 2 == 1) array[halfSize]!! else array[halfSize - 1]!!
     }
+
+    private data class Result(val n: Int, val rSquare: Double)
 
 }

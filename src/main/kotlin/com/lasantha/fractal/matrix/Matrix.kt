@@ -2,7 +2,6 @@
 
 package com.lasantha.fractal.matrix
 
-
 interface Matrix<out T : Number> {
     val pixelWidth: Int // Integer width of matrix, > 0
     val pixelHeight: Int // Integer height of matrix, > 0
@@ -22,43 +21,6 @@ interface Matrix<out T : Number> {
      * value: any Int value stored in that location
      */
     fun set(xPixel: Int, yPixel: Int, value: Int)
-
-    /**
-     * f: function to generate the Int value stored in that location
-     * xPixel: 0 to pixelWidth - 1
-     * yPixel: 0 to pixelHeight - 1
-     */
-    fun transform(f: (xPixel: Int, yPixel: Int) -> Int) {
-        for (y in 0 until pixelHeight) {
-            for (x in 0 until pixelWidth) {
-                set(x, y, f(x, y))
-            }
-        }
-    }
-
-    /**
-     * f: function to generate the Int value stored in that location
-     * range: The range covered by xPixel and yPixel
-     */
-    fun transform(f: (range: MatrixRange<T>) -> Int) {
-        transform(0, pixelWidth - 1, 0, pixelHeight - 1, f)
-    }
-
-    /**
-     * xFrom: starting X pixel
-     * xTo: ending X pixel (including)
-     * yFrom: starting Y pixel
-     * yTo: ending Y pixel (including)
-     * f: function to generate the Int value stored in that location
-     * range: The range covered by xPixel and yPixel
-     */
-    fun transform(xFrom: Int, xTo: Int, yFrom: Int, yTo: Int, f: (range: MatrixRange<T>) -> Int) {
-        for (y in yFrom..yTo) {
-            for (x in xFrom..xTo) {
-                set(x, y, f(pixelToRange(x, y)))
-            }
-        }
-    }
 
     /**
      * xPixel: 0 to pixelWidth - 1
