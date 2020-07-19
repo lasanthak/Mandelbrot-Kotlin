@@ -9,14 +9,12 @@ import kotlin.math.round
 class GrayColorCoder(override val maxN: Int, private val blendingFactor: Double) : ColorCoder {
     private val twoPI = 2 * PI
 
-    private val nonEscapedPointColor = encodeColor(0, 0, 0)
-
-    override fun toRGB(n: Int, rSquare: Double): Int {
+    override fun toRGB(n: Int, rxr: Double): Int {
         if (n >= maxN) {
-            return nonEscapedPointColor
+            return ColorCoder.DEFAULT_COLOR
         }
 
-        val v = ln(ln(rSquare) / 2.0.pow(n)) / blendingFactor
+        val v = ln(ln(rxr) / 2.0.pow(n)) / blendingFactor
         val gray = round(127.5 * (1 + cos(twoPI * v))).toInt()
 
         return encodeColor(gray, gray, gray)

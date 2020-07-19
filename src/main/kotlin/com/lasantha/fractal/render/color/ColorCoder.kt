@@ -13,10 +13,10 @@ interface ColorCoder {
 
     /**
      * @param n Number of iteration
-     * @param rSquare Square of escape radius (for the point when escapes)
+     * @param rxr Square of escape radius (for the point when escapes)
      * @return The RGB encoded integer for the color
      */
-    fun toRGB(n: Int, rSquare: Double): Int
+    fun toRGB(n: Int, rxr: Double): Int
 
     /**
      * Encodes a given red, green, and blue components (with range 0 to 255)
@@ -46,5 +46,8 @@ interface ColorCoder {
 
         // 00000000,00000000,00000000,11111111
         const val B_MASK = 0x000000ff
+
+        // Default color for non-escaping points (i.e. within the set)
+        const val DEFAULT_COLOR = 0
     }
 }

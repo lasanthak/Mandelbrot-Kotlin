@@ -11,14 +11,12 @@ class RGBColorCoder(override val maxN: Int, private val blendingFactor: Double) 
     private val gFactor = 1 / (3 * sqrt(2.0) * ln(2.0))
     private val bFactor = 1 / (7 * 3.0.pow(0.125) * ln(2.0))
 
-    private val nonEscapedPointColor = encodeColor(0, 0, 0)
-
-    override fun toRGB(n: Int, rSquare: Double): Int {
+    override fun toRGB(n: Int, rxr: Double): Int {
         if (n >= maxN) {
-            return nonEscapedPointColor
+            return ColorCoder.DEFAULT_COLOR
         }
 
-        val v = ln(ln(rSquare) / 2.0.pow(n)) / blendingFactor
+        val v = ln(ln(rxr) / 2.0.pow(n)) / blendingFactor
         val r = round(127.5 * (1 - cos(rFactor * v))).toInt()
         val g = round(127.5 * (1 - cos(gFactor * v))).toInt()
         val b = round(127.5 * (1 - cos(bFactor * v))).toInt()

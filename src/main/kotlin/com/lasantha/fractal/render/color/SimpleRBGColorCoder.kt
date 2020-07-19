@@ -2,11 +2,9 @@ package com.lasantha.fractal.render.color
 
 class SimpleRBGColorCoder(override val maxN: Int) : ColorCoder {
 
-    private val nonEscapedPointColor = encodeColor(0, 0, 0)
-
-    override fun toRGB(n: Int, rSquare: Double): Int {
+    override fun toRGB(n: Int, rxr: Double): Int {
         if (n >= maxN) {
-            return nonEscapedPointColor
+            return ColorCoder.DEFAULT_COLOR
         }
 
         val m = n % 0x00ffffff

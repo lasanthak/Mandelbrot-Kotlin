@@ -51,17 +51,17 @@ class Mandelbrot(private val maxN: Int,
         var n = 0
         var xx: Double
         var yy: Double
-        var rSquare: Double
+        var rxr: Double
         do {
             n++
             xx = x * x
             yy = y * y
             y = (2 * x * y) + yc
             x = xx - yy + xc
-            rSquare = xx + yy
-        } while (n < maxN && rSquare < escapeRSquare)
+            rxr = xx + yy
+        } while (n < maxN && rxr < escapeRSquare)
 
-        return Result(n, rSquare)
+        return Result(n, rxr)
     }
 
     private data class Result(val n: Int, val rSquare: Double)
