@@ -34,7 +34,10 @@ class Mandelbrot(private val maxN: Int,
             }
         }
 
-        val result = median(values)
+        // Get the median value
+        values.sortBy { it!!.n }
+        val result = values[values.size / 2]!!
+
         handler.invoke(result.n, result.rSquare)
     }
 
@@ -59,12 +62,6 @@ class Mandelbrot(private val maxN: Int,
         } while (n < maxN && rSquare < escapeRSquare)
 
         return Result(n, rSquare)
-    }
-
-    private fun median(array: Array<Result?>): Result {
-        array.sortBy { it!!.n }
-        val halfSize = array.size / 2
-        return if (array.size % 2 == 1) array[halfSize]!! else array[halfSize - 1]!!
     }
 
     private data class Result(val n: Int, val rSquare: Double)

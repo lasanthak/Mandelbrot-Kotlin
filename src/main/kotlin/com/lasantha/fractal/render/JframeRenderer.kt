@@ -2,9 +2,9 @@
 
 package com.lasantha.fractal.render
 
-import com.lasantha.fractal.MyTimer
 import com.lasantha.fractal.matrix.Matrix
 import java.awt.Color
+import java.awt.Cursor
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.Rectangle
@@ -20,39 +20,34 @@ import javax.swing.JFrame
 import javax.swing.JOptionPane
 
 class JFrameRenderer(
-    override val width: Int,
-    override val height: Int,
-    override val titleText: String
+        override val width: Int,
+        override val height: Int,
+        override val titleText: String
 ) : Renderer<Int> {
 
     private val frame = KJFrame(width, height, titleText)
-    private val rectangle = Rectangle(0, 0, width/4, height/4)
-
+    private val rectangle = Rectangle(0, 0, width / 4, height / 4)
     private var doZoomIn: ((x: Int, y: Int) -> Unit)? = null
+    private var doReRender: (() -> Unit)? = null
 
     override fun render(matrix: Matrix<*, Int>) {
-        verifyDimensions(matrix)
-        val timer = MyTimer("JFrame renderer")
-        val graphics = frame.image.graphics
-
-        matrix.forEach { value, x, y ->
-            val (r, g, b) = ColorCoder.decodeColor(value)
-            graphics.color = Color(r, g, b)
-            graphics.fillRect(x, y, 1, 1)
+        if (matrix.widthInPixels > width || matrix.heightInPixels > height) {
+            throw IllegalArgumentException("Invalid dimensions")
         }
-
+        matrix.forEach { sRGBValue, x, y -> frame.image.setRGB(x, y, sRGBValue) }
         frame.repaint()
-        timer.tick()
     }
 
     override fun zoomInHandler(doZoomIn: (x: Int, y: Int) -> Unit) {
         this.doZoomIn = doZoomIn
     }
 
-    private fun verifyDimensions(matrix: Matrix<*, Int>) {
-        if (matrix.widthInPixels > width || matrix.heightInPixels > height) {
-            throw IllegalArgumentException("Invalid dimensions")
-        }
+    override fun reRenderHandler(doReRender: () -> Unit) {
+        this.doReRender = doReRender
+    }
+
+    override fun indicateBusy(busy: Boolean) {
+        frame.cursor = if (busy) Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) else Cursor.getDefaultCursor()
     }
 
     private fun saveImage() {
@@ -83,20 +78,40 @@ class JFrameRenderer(
 
         frame.addMouseListener(object : MouseListener {
             override fun mouseClicked(e: MouseEvent) {
-                if (e.button == MouseEvent.BUTTON1 && e.clickCount == 2) {
-                    doZoomIn?.invoke(e.x, e.y)
+                when (e.button) {
+                    MouseEvent.BUTTON1 -> {
+                        if (e.clickCount == 2) {
+                            doZoomIn?.invoke(e.x, e.y)
+                        }
+                    }
+                    MouseEvent.BUTTON2 -> {
+                        doReRender?.invoke()
+                    }
+                    else -> {}
                 }
             }
 
             override fun mousePressed(e: MouseEvent) {
-                rectangle.setLocation(e.x, e.y)
-                frame.rectangle = rectangle
-                frame.repaint()
+                when (e.button) {
+                    MouseEvent.BUTTON1 -> {
+                        rectangle.setLocation(e.x, e.y)
+                        frame.rectangle = rectangle
+                        frame.cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR)
+                        frame.repaint()
+                    }
+                    else -> {}
+                }
             }
 
             override fun mouseReleased(e: MouseEvent) {
-                frame.rectangle = null
-                frame.repaint()
+                when (e.button) {
+                    MouseEvent.BUTTON1 -> {
+                        frame.rectangle = null
+                        frame.cursor = Cursor.getDefaultCursor()
+                        frame.repaint()
+                    }
+                    else -> {}
+                }
             }
 
             override fun mouseEntered(e: MouseEvent) {}
@@ -123,7 +138,7 @@ private class KJFrame(width: Int, height: Int, titleText: String) : JFrame(title
 
         val r = rectangle
         if (r != null) {
-            g2.color = Color.YELLOW
+            g2.color = Color.WHITE
             g2.draw(r)
         }
     }
