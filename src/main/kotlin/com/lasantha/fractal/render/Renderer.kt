@@ -1,4 +1,4 @@
-package com.lasantha.fractal
+package com.lasantha.fractal.render
 
 import com.lasantha.fractal.matrix.Matrix
 

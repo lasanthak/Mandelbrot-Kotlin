@@ -1,7 +1,8 @@
 @file:Suppress("unused")
 
-package com.lasantha.fractal
+package com.lasantha.fractal.render
 
+import com.lasantha.fractal.MyTimer
 import com.lasantha.fractal.matrix.Matrix
 import java.awt.Color
 import java.awt.Graphics
@@ -32,11 +33,12 @@ class JFrameRenderer(
     override fun render(matrix: Matrix<*, Int>) {
         verifyDimensions(matrix)
         val timer = MyTimer("JFrame renderer")
-        val g = frame.image.graphics
+        val graphics = frame.image.graphics
 
         matrix.forEach { value, x, y ->
-            g.color = Color(value, value, value)
-            g.fillRect(x, y, 1, 1)
+            val (r, g, b) = ColorCoder.decodeColor(value)
+            graphics.color = Color(r, g, b)
+            graphics.fillRect(x, y, 1, 1)
         }
 
         frame.repaint()

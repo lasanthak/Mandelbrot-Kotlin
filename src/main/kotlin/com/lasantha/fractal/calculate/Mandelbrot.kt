@@ -1,4 +1,4 @@
-package com.lasantha.fractal
+package com.lasantha.fractal.calculate
 
 import com.lasantha.fractal.matrix.MatrixRange
 
