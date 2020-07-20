@@ -27,7 +27,7 @@ object FractalApp {
     private const val maxN = 2000
     private const val escapeRadius = 1000.0
     private const val samplesSqrt = 3 // 5, 4
-    private const val blendingFactor = 6.7 //111, 6.7, 4.3
+    private const val blendingFactor = 5.45656 //111, 7.389 (e^2), 6.7, 5.45656 (2e), 4.3, 2.71828 (e)
 
     private const val w = 1920
     private const val h = 1080
@@ -45,9 +45,9 @@ object FractalApp {
 //    private var matrix = DoubleMatrix(w, h, 0.4379185144138036, 0.3418942276032618, 3.556825615928742E-17)
 //    private var matrix = DoubleMatrix(w, h, 0.43791851441382945, 0.34189422760324895, 8.90491384334761E-18)
 //    private var matrix = DoubleMatrix(w, h, 0.4379185144116993, 0.3418942276044753, 2.273747034275141E-15)
-//    private var matrix = DoubleMatrix(w, h, 0.4379185144132852, 0.3418942276035124, 5.684753079793625E-16)
+    private var matrix = DoubleMatrix(w, h, 0.4379185144132852, 0.3418942276035124, 5.684753079793625E-16)
 //    private var matrix = DoubleMatrix(w, h, 0.4437215614318849, 0.3642622566223145, 9.53674316410362E-9)
-    private var matrix = DoubleMatrix(w, h, -0.9578436348773535, 0.272229713592678, 9.313225769284432E-12)
+//    private var matrix = DoubleMatrix(w, h, -0.9578436348773535, 0.272229713592678, 9.313225769284432E-12)
 //    private var matrix = DoubleMatrix(w, h, -0.9578436619788404, 0.2722297281771896, 3.725290307713773E-11)
 //    private var matrix = DoubleMatrix(w, h, -0.9578437647223468, 0.2722297826409338, 1.4901161196160622E-10)
 //    private var matrix = DoubleMatrix(w, h, -0.957844210863113, 0.27223002314567546, 5.960464477950256E-10)
@@ -108,6 +108,7 @@ object FractalApp {
     }
 
     private fun doReRender() {
+        // cycle through the list of color coders
         colorCoderIndex = (colorCoderIndex + 1) % colorCoders.size
         doCalculateAndRender()
     }

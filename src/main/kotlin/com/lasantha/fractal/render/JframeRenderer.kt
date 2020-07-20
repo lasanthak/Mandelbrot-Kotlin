@@ -84,7 +84,7 @@ class JFrameRenderer(
                             doZoomIn?.invoke(e.x, e.y)
                         }
                     }
-                    MouseEvent.BUTTON2 -> {
+                    MouseEvent.BUTTON3 -> {
                         doReRender?.invoke()
                     }
                     else -> {}
