@@ -2,9 +2,9 @@ package com.lasantha.fractal
 
 import com.lasantha.fractal.calculate.Mandelbrot
 import com.lasantha.fractal.matrix.DoubleMatrix
-import com.lasantha.fractal.matrix.MatrixRange
 import com.lasantha.fractal.render.JFrameRenderer
 import com.lasantha.fractal.render.Renderer
+import com.lasantha.fractal.render.color.ColorCoder
 import com.lasantha.fractal.render.color.GrayColorCoder
 import com.lasantha.fractal.render.color.RGBColorCoder
 import com.lasantha.fractal.render.color.SimpleGrayColorCoder
@@ -86,8 +86,10 @@ object MandelbrotApp {
         repeat(h) { y ->
             jobs += GlobalScope.launch(Dispatchers.Default) {
                 for (x in 0 until w) { // 0 to w -1
-                    mandelbrot.calculate(matrix.pixelToRange(x, y)) { n, rxr ->
-                        matrix.set(x, y, colorCoders[colorCoderIndex].toRGB(n, rxr))
+                    // If the point is within the set (ie. already calculated before), no need to re-calculate
+                    if (matrix.get(x, y) != ColorCoder.INSIDE_COLOR) {
+                        val rangeForPoint = matrix.pixelToRange(x, y)
+                        mandelbrot.calculate(rangeForPoint) { n, rxr -> matrix.set(x, y, toColor(n, rxr)) }
                     }
                 }
             }
@@ -95,6 +97,10 @@ object MandelbrotApp {
 
         println("Running ${jobs.size} coroutines")
         jobs.forEach { it.join() }
+    }
+
+    private fun toColor(n:Int, rxr:Double): Int {
+        return colorCoders[colorCoderIndex].toRGB(n, rxr)
     }
 
     private fun doCalculateAndRender() {

@@ -4,7 +4,7 @@ class SimpleGrayColorCoder(override val maxN: Int) : ColorCoder {
 
     override fun toRGB(n: Int, rxr: Double): Int {
         if (n >= maxN) {
-            return ColorCoder.DEFAULT_COLOR
+            return ColorCoder.INSIDE_COLOR
         }
 
         val m = n % 255

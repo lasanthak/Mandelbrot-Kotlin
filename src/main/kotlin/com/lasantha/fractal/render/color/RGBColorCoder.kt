@@ -16,7 +16,7 @@ class RGBColorCoder(override val maxN: Int, private val blendingFactor: Double) 
 
     override fun toRGB(n: Int, rxr: Double): Int {
         if (n >= maxN) {
-            return ColorCoder.DEFAULT_COLOR
+            return ColorCoder.INSIDE_COLOR
         }
 
         val v = ln(ln(rxr) / 2.0.pow(n)) / blendingFactor

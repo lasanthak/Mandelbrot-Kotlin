@@ -46,9 +46,10 @@ class Mandelbrot(private val maxN: Int,
         val xc = (range.x1 + range.x2) / 2
         val yc = (range.y1 + range.y2) / 2
 
-        var x = 0.0
-        var y = 0.0
-        var n = 0
+        // Originally starts at (0,0), but skipping first iteration by setting Zc
+        var x = xc
+        var y = yc
+        var n = 1
         var xx: Double
         var yy: Double
         var rxr: Double

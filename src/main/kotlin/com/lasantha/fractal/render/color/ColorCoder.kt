@@ -48,6 +48,6 @@ interface ColorCoder {
         const val B_MASK = 0x000000ff
 
         // Default color (black) for non-escaping points (i.e. within the set)
-        const val DEFAULT_COLOR = 0
+        const val INSIDE_COLOR = 0x01000000
     }
 }

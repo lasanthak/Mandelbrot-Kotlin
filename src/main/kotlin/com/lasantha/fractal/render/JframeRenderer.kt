@@ -129,7 +129,6 @@ class JFrameRenderer(
 
 private class KJFrame(width: Int, height: Int, titleText: String) : JFrame(titleText) {
     val image = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-
     var rectangle: Rectangle? = null
 
     init {
@@ -143,10 +142,10 @@ private class KJFrame(width: Int, height: Int, titleText: String) : JFrame(title
         val g2 = g as Graphics2D
         g2.drawImage(image, null, 0, 0)
 
-        val r = rectangle
-        if (r != null) {
+        val rec = rectangle
+        if (rec != null) {
             g2.color = Color.WHITE
-            g2.draw(r)
+            g2.draw(rec)
         }
     }
 }
