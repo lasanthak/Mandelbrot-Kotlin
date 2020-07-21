@@ -6,6 +6,9 @@ import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.round
 
+/**
+ * See: https://www.math.univ-toulouse.fr/~cheritat/wiki-draw/index.php/Mandelbrot_set
+ */
 class GrayColorCoder(override val maxN: Int, private val blendingFactor: Double) : ColorCoder {
     private val twoPI = 2 * PI
 

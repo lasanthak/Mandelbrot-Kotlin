@@ -5,8 +5,8 @@ package com.lasantha.fractal.matrix
 interface Matrix<out R : Number, T> {
     val widthInPixels: Int // Integer width of matrix, > 0
     val heightInPixels: Int // Integer height of matrix, > 0
-    val rangeX1: R // X of top left point in the range
-    val rangeY1: R // Y of top left point in the range
+    val midX: R // X of middle point in the range
+    val midY: R // Y of middle point in the range
     val rangePixelSize: R // Single pixel size represented in the range
 
     /**
@@ -45,4 +45,9 @@ interface Matrix<out R : Number, T> {
  * y2: smallest possible y value for the range
  */
 data class MatrixRange<out R : Number>(val x1: R, val x2: R, val y1: R, val y2: R)
+
+/**
+ * A single point in a range
+ */
+data class MatrixPoint<out R : Number>(val x: R, val y: R)
 

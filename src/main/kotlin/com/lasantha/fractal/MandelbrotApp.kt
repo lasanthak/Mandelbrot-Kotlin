@@ -2,6 +2,7 @@ package com.lasantha.fractal
 
 import com.lasantha.fractal.calculate.Mandelbrot
 import com.lasantha.fractal.matrix.DoubleMatrix
+import com.lasantha.fractal.matrix.MatrixRange
 import com.lasantha.fractal.render.JFrameRenderer
 import com.lasantha.fractal.render.Renderer
 import com.lasantha.fractal.render.color.GrayColorCoder
@@ -20,7 +21,7 @@ import java.text.DecimalFormatSymbols
 import java.util.Locale
 
 
-object FractalApp {
+object MandelbrotApp {
     private val df: DecimalFormat = DecimalFormat("#,###")
     private var zoomFactor = BigDecimal.ONE
 
@@ -34,31 +35,33 @@ object FractalApp {
 //    private const val w = 2880
 //    private const val h = 1800
 
-    //    private var matrix = DoubleMatrix(w, h, -3.0, 1.25, 0.0025)
-//    private var matrix = DoubleMatrix(w, h, -1.61375, 0.48625, 6.25E-4)
-//    private var matrix = DoubleMatrix(w, h, -1.3728125, 0.4353125, 1.5625E-4)
-//    private var matrix = DoubleMatrix(w, h, -1.233828125, 0.334609375, 3.90625E-5)
-//    private var matrix = DoubleMatrix(w, h, -1.21466796875, 0.32115234375, 9.765625E-6)
-//    private var matrix = DoubleMatrix(w, h, -1.927921142578, 3.7231445312492777E-4, 6.103515625E-7)
-//    private var matrix = DoubleMatrix(w, h, -1.9353922718009557, -2.5250200999817516E-6, 1.455191580660801E-13)
-//    private var matrix = DoubleMatrix(w, h, -1.93542839050293, 2.0065307617046905E-5, 3.8146972656388775E-8)
-//    private var matrix = DoubleMatrix(w, h, 0.4379185144138036, 0.3418942276032618, 3.556825615928742E-17)
-//    private var matrix = DoubleMatrix(w, h, 0.43791851441382945, 0.34189422760324895, 8.90491384334761E-18)
-//    private var matrix = DoubleMatrix(w, h, 0.4379185144116993, 0.3418942276044753, 2.273747034275141E-15)
-    private var matrix = DoubleMatrix(w, h, 0.4379185144132852, 0.3418942276035124, 5.684753079793625E-16)
-//    private var matrix = DoubleMatrix(w, h, 0.4437215614318849, 0.3642622566223145, 9.53674316410362E-9)
-//    private var matrix = DoubleMatrix(w, h, -0.9578436348773535, 0.272229713592678, 9.313225769284432E-12)
-//    private var matrix = DoubleMatrix(w, h, -0.9578436619788404, 0.2722297281771896, 3.725290307713773E-11)
-//    private var matrix = DoubleMatrix(w, h, -0.9578437647223468, 0.2722297826409338, 1.4901161196160622E-10)
-//    private var matrix = DoubleMatrix(w, h, -0.957844210863113, 0.27223002314567546, 5.960464477950256E-10)
-//    private var matrix = DoubleMatrix(w, h, -0.9578589820861813, 0.272234363555908, 9.53674316410362E-9)
-//    private var matrix = DoubleMatrix(w, h, -0.95788703918457, 0.2722489166259764, 3.814697265627313E-8)
-//    private var matrix = DoubleMatrix(w, h, -0.9579977416992185, 0.2723043823242186, 1.525878906250411E-7)
-//    private var matrix = DoubleMatrix(w, h, -0.9584484863281248, 0.27252563476562486, 6.103515625000231E-7)
-//    private var matrix = DoubleMatrix(w, h, -0.6711912869894877, 0.4583694873703642, 2.3283064776580675E-12)
-//    private var matrix = DoubleMatrix(w, h, -0.9578436278225849, 0.2722297113062811, 2.3283064776580675E-12)
-//    private var matrix = DoubleMatrix(w, h, -1.1980964751602863, 0.31521355852393285, 2.2736956350610384E-15)
-//    private var matrix = DoubleMatrix(w, h, 0.26141123801469807, 0.0019614884257316114, 1.4901161193992217E-10)
+    private var matrix = DoubleMatrix(w, h, -0.5, 0.0, 0.0025)
+//    private var matrix = DoubleMatrix(w, h, -1.2228125, 0.3509375, 1.5625E-4)
+//    private var matrix = DoubleMatrix(w, h, -1.1613729858398436, 0.29056549072265603, 1.5258789062509252E-7)
+//    private var matrix = DoubleMatrix(w, h, -1.1613719461672, 0.2905672235228119, 9.313225769284432E-12)
+//    private var matrix = DoubleMatrix(w, h, -1.196328125, 0.31351562499999996, 3.90625E-5)
+//    private var matrix = DoubleMatrix(w, h, -1.20529296875, 0.31587890625000004, 9.765625E-6)
+//    private var matrix = DoubleMatrix(w, h, -1.9273352050780002, 4.272460937492775E-5, 6.103515625E-7)
+//    private var matrix = DoubleMatrix(w, h, -1.9353922716612573, -2.5250986803271072E-6, 1.455191580660801E-13)
+//    private var matrix = DoubleMatrix(w, h, -1.9353917694091798, -5.340576174030348E-7, 3.8146972656388775E-8)
+//    private var matrix = DoubleMatrix(w, h, 0.4379185144138377, 0.3418942276032426, 3.556825615928742E-17)
+//    private var matrix = DoubleMatrix(w, h, 0.437918514413838, 0.3418942276032441, 8.90491384334761E-18)
+//    private var matrix = DoubleMatrix(w, h, 0.43791851441388213, 0.3418942276032475, 2.273747034275141E-15)
+//    private var matrix = DoubleMatrix(w, h, 0.43791851441383095, 0.3418942276032054, 5.684753079793625E-16)
+//    private var matrix = DoubleMatrix(w, h, 0.44373071670532244, 0.36425710678100587, 9.53674316410362E-9)
+//    private var matrix = DoubleMatrix(w, h, -0.9578436259366567, 0.27222970856353607, 9.313225769284432E-12)
+//    private var matrix = DoubleMatrix(w, h, -0.9578436262160535, 0.27222970806062197, 3.725290307713773E-11)
+//    private var matrix = DoubleMatrix(w, h, -0.9578436216711993, 0.2722297021746633, 1.4901161196160622E-10)
+//    private var matrix = DoubleMatrix(w, h, -0.9578436386585231, 0.27222970128059365, 5.960464477950256E-10)
+//    private var matrix = DoubleMatrix(w, h, -0.9578498268127437, 0.2722292137145994, 9.53674316410362E-9)
+//    private var matrix = DoubleMatrix(w, h, -0.9578504180908199, 0.272228317260742, 3.814697265627313E-8)
+//    private var matrix = DoubleMatrix(w, h, -0.9578512573242184, 0.2722219848632811, 1.525878906250411E-7)
+//    private var matrix = DoubleMatrix(w, h, -0.9578625488281248, 0.2721960449218748, 6.103515625000231E-7)
+//    private var matrix = DoubleMatrix(w, h, -0.6711912847543134, 0.4583694861130787, 2.3283064776580675E-12)
+//    private var matrix = DoubleMatrix(w, h, -0.9578436255874107, 0.2722297100489956, 2.3283064776580675E-12)
+//    private var matrix = DoubleMatrix(w, h, -1.1980964751581036, 0.31521355852270505, 2.2736956350610384E-15)
+//    private var matrix = DoubleMatrix(w, h, 0.26141138106584555, 0.001961407959461164, 1.4901161193992217E-10)
+//    private var matrix = DoubleMatrix(w, h, -1.1613719455979288, 0.29056722398498075, 5.82076670813731E-13)
 
     private val mandelbrot = Mandelbrot(maxN, escapeRadius, samplesSqrt)
     private val colorCoders = listOf(
@@ -114,21 +117,23 @@ object FractalApp {
     }
 
     private fun doZoomIn(x: Int, y: Int) {
-        val r1 = matrix.pixelToRange(x, y)
+        val r1 = matrix.pixelToRange(x - w / 8, y - h / 8)
         val x1 = (r1.x1 + r1.x2) / 2
         val y1 = (r1.y1 + r1.y2) / 2
 
-        val r2 = matrix.pixelToRange(x + w / 4, y + h / 4)
+        val r2 = matrix.pixelToRange(x + w / 8, y + h / 8)
         val x2 = (r2.x1 + r2.x2) / 2
         val y2 = (r2.y1 + r2.y2) / 2
 
+        val midX = (x1 + x2) / 2
+        val midY = (y1 + y2) / 2
         val pixelSize = max((x2 - x1) / w, (y1 - y2) / h)
 
-        matrix = DoubleMatrix(w, h, x1, y1, pixelSize)
+        matrix = DoubleMatrix(w, h, midX, midY, pixelSize)
         zoomFactor = zoomFactor.multiply(BigDecimal.valueOf(4))
 
         println("┈┈┈┈┈┈┈┈┈< Zooming ${df.format(zoomFactor)}x >┈┈┈┈┈┈┈┈┈")
-        println("($w, $h, $x1, $y1, $pixelSize)")
+        println("($w, $h, $midX, $midY, $pixelSize)")
         doCalculateAndRender()
     }
 

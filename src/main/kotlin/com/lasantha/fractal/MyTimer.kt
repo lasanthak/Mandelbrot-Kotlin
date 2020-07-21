@@ -9,6 +9,14 @@ class MyTimer(private val name: String) {
     fun tick(stepName: String) {
         val now = System.currentTimeMillis()
         val prevLast = last.getAndSet(now);
-        println("[$name - $stepName] time: ${now - prevLast} ms, total: ${now - start}")
+
+        val time = now - prevLast
+        val total = now - start
+        val timeString = "[$name - $stepName] time: $time ms"
+        if (time == total) {
+            println(timeString)
+        } else {
+            println("$timeString, total: $total")
+        }
     }
 }

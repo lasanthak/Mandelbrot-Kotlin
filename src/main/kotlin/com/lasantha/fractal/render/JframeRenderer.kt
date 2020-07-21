@@ -94,10 +94,17 @@ class JFrameRenderer(
             override fun mousePressed(e: MouseEvent) {
                 when (e.button) {
                     MouseEvent.BUTTON1 -> {
-                        rectangle.setLocation(e.x, e.y)
+                        val x1 = e.x - rectangle.width / 2;
+                        val y1 = e.y - rectangle.height / 2;
+                        val x2 = rectangle.width + 1
+                        val y2 = rectangle.height + 1
+                        rectangle.setLocation(x1, y1)
                         frame.rectangle = rectangle
+                        frame.repaint(x1, y1, x2, y1)
+                        frame.repaint(x1, y1, x2, y2)
+                        frame.repaint(x1, y2, x2, y2)
+                        frame.repaint(x2, y1, x2, y2)
                         frame.cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR)
-                        frame.repaint()
                     }
                     else -> {}
                 }
