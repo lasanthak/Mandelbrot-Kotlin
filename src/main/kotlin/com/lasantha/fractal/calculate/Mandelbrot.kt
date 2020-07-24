@@ -8,12 +8,25 @@ class Mandelbrot(private val maxN: Int,
 
     private val escapeRSquare = escapeRadius * escapeRadius
 
+    fun calculateMandelbrotSet(range: MatrixRange<Double>,
+                               handler: (n: Int, rSquare: Double) -> Unit) {
+        calculateDeep(range, null, handler)
+    }
+
+    fun calculateJuliaSet(range: MatrixRange<Double>,
+                          cPoint: Pair<Double, Double>,
+                          handler: (n: Int, rSquare: Double) -> Unit) {
+        calculateDeep(range, cPoint, handler)
+    }
+
     /*
     * Complex number Zc is in the Mandelbrot set if this is bounded for very large n, starting with Z0.
     * Zn+1 = Zn ^ 2 + Zc
     * See https://en.wikipedia.org/wiki/Mandelbrot_set
      */
-    fun calculate(range: MatrixRange<Double>, handler: (n: Int, rSquare: Double) -> Unit) {
+    private fun calculateDeep(range: MatrixRange<Double>,
+                              cPoint: Pair<Double, Double>?,
+                              handler: (n: Int, rSquare: Double) -> Unit) {
         val values = Array<Result?>(samplesSqrt * samplesSqrt) { null }
         val xPixW = (range.x2 - range.x1) / samplesSqrt
         val yPixH = (range.y1 - range.y2) / samplesSqrt
@@ -29,8 +42,16 @@ class Mandelbrot(private val maxN: Int,
 
         for (i in 0 until samplesSqrt) {
             for (j in 0 until samplesSqrt) {
-                val rangeForPoint = MatrixRange(xMarkers[i], xMarkers[i + 1], yMarkers[j], yMarkers[j + 1])
-                values[i * samplesSqrt + j] = calculatePoint(rangeForPoint)
+                val index = i * samplesSqrt + j
+                val (x1, x2, y1, y2) = MatrixRange(xMarkers[i], xMarkers[i + 1], yMarkers[j], yMarkers[j + 1])
+                val midPoint = Pair((x1 + x2) / 2, (y1 + y2) / 2)
+                if (cPoint == null) {
+                    // Mandelbrot set, starting at Z instead of (0,0) for optimization
+                    values[index] = calculatePoint(midPoint, midPoint)
+                } else {
+                    // Julia set for Zc
+                    values[index] = calculatePoint(midPoint, cPoint)
+                }
             }
         }
 
@@ -41,14 +62,13 @@ class Mandelbrot(private val maxN: Int,
         handler.invoke(result.n, result.rSquare)
     }
 
-    private fun calculatePoint(range: MatrixRange<Double>): Result {
-        // Take the mid point as Zc
-        val xc = (range.x1 + range.x2) / 2
-        val yc = (range.y1 + range.y2) / 2
+    private fun calculatePoint(startingPoint: Pair<Double, Double>, cPoint: Pair<Double, Double>): Result {
+        val xc = cPoint.first
+        val yc = cPoint.second
 
         // Originally starts at (0,0), but skipping first iteration by setting Zc
-        var x = xc
-        var y = yc
+        var x = startingPoint.first
+        var y = startingPoint.second
         var n = 1
         var xx: Double
         var yy: Double

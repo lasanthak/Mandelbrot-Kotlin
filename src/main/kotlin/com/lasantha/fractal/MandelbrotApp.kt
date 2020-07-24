@@ -8,33 +8,35 @@ import com.lasantha.fractal.render.color.ColorCoder
 import com.lasantha.fractal.render.color.GrayColorCoder
 import com.lasantha.fractal.render.color.RGBColorCoder
 import com.lasantha.fractal.render.color.SimpleGrayColorCoder
-import com.lasantha.fractal.render.color.SimpleRBGColorCoder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.lang.Double.max
-import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
+import kotlin.math.ceil
+import kotlin.math.min
+import kotlin.math.pow
 
 
 object MandelbrotApp {
     private val df: DecimalFormat = DecimalFormat("#,###")
-    private var zoomFactor = BigDecimal.ONE
+    private var zoomFactor = 1
 
     private const val maxN = 2000
     private const val escapeRadius = 1000.0
     private const val samplesSqrt = 3 // 5, 4
-    private const val blendingFactor = 5.45656 //111, 7.389 (e^2), 6.7, 5.45656 (2e), 4.3, 2.71828 (e)
+    private const val blendingFactor = 5.45656 //111.0, 7.389 (e^2), 6.7, 5.45656 (2e), 4.3, 2.71828 (e)
 
     private const val w = 1920
     private const val h = 1080
 //    private const val w = 2880
 //    private const val h = 1800
 
+    // Mandelbrot Set
     private var matrix = DoubleMatrix(w, h, -0.5, 0.0, 0.0025)
 //    private var matrix = DoubleMatrix(w, h, -1.2228125, 0.3509375, 1.5625E-4)
 //    private var matrix = DoubleMatrix(w, h, -1.1613729858398436, 0.29056549072265603, 1.5258789062509252E-7)
@@ -63,16 +65,28 @@ object MandelbrotApp {
 //    private var matrix = DoubleMatrix(w, h, 0.26141138106584555, 0.001961407959461164, 1.4901161193992217E-10)
 //    private var matrix = DoubleMatrix(w, h, -1.1613719455979288, 0.29056722398498075, 5.82076670813731E-13)
 
-    private val mandelbrot = Mandelbrot(maxN, escapeRadius, samplesSqrt)
+
+    // Julia set
+//    private var matrix = DoubleMatrix(w, h, 0.0, 0.0, 0.0025)
+//    private val cPoint = Pair(-0.8, 0.156) // (blending factor > 300)
+//    private val cPoint = Pair(-0.7269, 0.1889)
+//    private val cPoint = Pair(-0.4, 0.6)
+//    private val cPoint = Pair(-0.8, 0.156)
+//    private val cPoint = Pair(0.285, 0.01)
+    private val cPoint = Pair(-0.74543, 0.11301) // (blending factor > 212) ***
+//    private val cPoint = Pair(-0.75, 0.11)
+//    private val cPoint = Pair(-0.1, 0.651)
+
     private val colorCoders = listOf(
             RGBColorCoder(maxN, blendingFactor),
-            GrayColorCoder(maxN, blendingFactor),
-            SimpleRBGColorCoder(maxN),
-            SimpleGrayColorCoder(maxN)
+            SimpleGrayColorCoder(maxN),
+            GrayColorCoder(maxN, blendingFactor)
     )
     private var colorCoderIndex = 0
 
     private val renderer: Renderer<Int> = JFrameRenderer(w, h, "Mandelbrot Set")
+
+    private val mandelbrot = Mandelbrot(maxN, escapeRadius, samplesSqrt)
 
     init {
         df.decimalFormatSymbols = DecimalFormatSymbols(Locale.getDefault())
@@ -82,14 +96,21 @@ object MandelbrotApp {
 
     private fun doParallelCalculations() = runBlocking {
         val jobs = mutableListOf<Job>()
-        // Each row is calculated in a single coroutine
-        repeat(h) { y ->
+
+        val noOfCoroutines = h/2
+        val rowsPerCoroutine = ceil(h.toDouble() / noOfCoroutines).toInt()
+        repeat(noOfCoroutines) { i ->
+            val start = i * rowsPerCoroutine
+            val end = min((i + 1) * rowsPerCoroutine, h)
             jobs += GlobalScope.launch(Dispatchers.Default) {
-                for (x in 0 until w) { // 0 to w -1
-                    // If the point is within the set (ie. already calculated before), no need to re-calculate
-                    if (matrix.get(x, y) != ColorCoder.INSIDE_COLOR) {
-                        val rangeForPoint = matrix.pixelToRange(x, y)
-                        mandelbrot.calculate(rangeForPoint) { n, rxr -> matrix.set(x, y, toColor(n, rxr)) }
+                for (y in start until end) { // start to end -1
+                    for (x in 0 until w) { // 0 to w -1
+                        // If the point is within the set (ie. already calculated), no need to re-calculate
+                        if (matrix.get(x, y) != ColorCoder.INSIDE_COLOR) {
+                            val rangeForPoint = matrix.pixelToRange(x, y)
+                            mandelbrot.calculateMandelbrotSet(rangeForPoint) { n, rxr -> matrix.set(x, y, toColor(n, rxr)) }
+//                        mandelbrot.calculateJuliaSet(rangeForPoint, cPoint) { n, rxr -> matrix.set(x, y, toColor(n, rxr)) }
+                        }
                     }
                 }
             }
@@ -122,6 +143,9 @@ object MandelbrotApp {
         doCalculateAndRender()
     }
 
+    /**
+     * Zooms into a 1/4 of a region (i.e. 4x magnification).
+     */
     private fun doZoomIn(x: Int, y: Int) {
         val r1 = matrix.pixelToRange(x - w / 8, y - h / 8)
         val x1 = (r1.x1 + r1.x2) / 2
@@ -136,9 +160,9 @@ object MandelbrotApp {
         val pixelSize = max((x2 - x1) / w, (y1 - y2) / h)
 
         matrix = DoubleMatrix(w, h, midX, midY, pixelSize)
-        zoomFactor = zoomFactor.multiply(BigDecimal.valueOf(4))
+        zoomFactor++
 
-        println("┈┈┈┈┈┈┈┈┈< Zooming ${df.format(zoomFactor)}x >┈┈┈┈┈┈┈┈┈")
+        println("┈┈┈┈┈┈┈┈┈[ ${zoomFactor}x Zoom, ${df.format(4.0.pow(zoomFactor))}x Magnification]┈┈┈┈┈┈┈┈┈")
         println("($w, $h, $midX, $midY, $pixelSize)")
         doCalculateAndRender()
     }
