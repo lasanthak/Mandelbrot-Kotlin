@@ -10,6 +10,6 @@ class SimpleGrayColorCoder(override val maxN: Int) : ColorCoder {
         val m = n % 255
         val gray = if ((n / 255) % 2 == 0) m else 255 - m
 
-        return encodeColor(gray, gray, gray)
+        return ColorCoder.encodeColor(gray, gray, gray)
     }
 }

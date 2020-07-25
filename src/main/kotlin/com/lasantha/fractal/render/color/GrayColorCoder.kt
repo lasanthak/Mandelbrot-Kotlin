@@ -20,6 +20,6 @@ class GrayColorCoder(override val maxN: Int, private val blendingFactor: Double)
         val v = ln(ln(rxr) / 2.0.pow(n)) / blendingFactor
         val gray = round(127.5 * (1 + cos(twoPI * v))).toInt()
 
-        return encodeColor(gray, gray, gray)
+        return ColorCoder.encodeColor(gray, gray, gray)
     }
 }

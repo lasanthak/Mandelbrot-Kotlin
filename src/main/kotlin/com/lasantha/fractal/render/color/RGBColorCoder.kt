@@ -24,6 +24,6 @@ class RGBColorCoder(override val maxN: Int, private val blendingFactor: Double) 
         val g = round(127.5 * (1 - cos(gFactor * v))).toInt()
         val b = round(127.5 * (1 - cos(bFactor * v))).toInt()
 
-        return encodeColor(r, g, b)
+        return ColorCoder.encodeColor(r, g, b)
     }
 }

@@ -7,6 +7,7 @@ import com.lasantha.fractal.render.Renderer
 import com.lasantha.fractal.render.color.ColorCoder
 import com.lasantha.fractal.render.color.GrayColorCoder
 import com.lasantha.fractal.render.color.RGBColorCoder
+import com.lasantha.fractal.render.color.Simple3DColorCoder
 import com.lasantha.fractal.render.color.SimpleGrayColorCoder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -28,7 +29,7 @@ object MandelbrotApp {
 
     private const val maxN = 2000
     private const val escapeRadius = 1000.0
-    private const val samplesSqrt = 3 // 5, 4
+    private const val samplesSqrt = 5 // 5, 4
     private const val blendingFactor = 5.45656 //111.0, 7.389 (e^2), 6.7, 5.45656 (2e), 4.3, 2.71828 (e)
 
     private const val w = 1920
@@ -37,7 +38,7 @@ object MandelbrotApp {
 //    private const val h = 1800
 
     // Mandelbrot Set
-    private var matrix = DoubleMatrix(w, h, -0.5, 0.0, 0.0025)
+//    private var matrix = DoubleMatrix(w, h, -0.5, 0.0, 0.0025)
 //    private var matrix = DoubleMatrix(w, h, -1.2228125, 0.3509375, 1.5625E-4)
 //    private var matrix = DoubleMatrix(w, h, -1.1613729858398436, 0.29056549072265603, 1.5258789062509252E-7)
 //    private var matrix = DoubleMatrix(w, h, -1.1613719461672, 0.2905672235228119, 9.313225769284432E-12)
@@ -67,7 +68,7 @@ object MandelbrotApp {
 
 
     // Julia set
-//    private var matrix = DoubleMatrix(w, h, 0.0, 0.0, 0.0025)
+    private var matrix = DoubleMatrix(w, h, 0.0, 0.0, 0.0025)
 //    private val cPoint = Pair(-0.8, 0.156) // (blending factor > 300)
 //    private val cPoint = Pair(-0.7269, 0.1889)
 //    private val cPoint = Pair(-0.4, 0.6)
@@ -83,6 +84,7 @@ object MandelbrotApp {
             GrayColorCoder(maxN, blendingFactor)
     )
     private var colorCoderIndex = 0
+    private val simple3DColorCoder = Simple3DColorCoder(maxN)
 
     private val renderer: Renderer<Int> = JFrameRenderer(w, h, "Mandelbrot Set")
 
@@ -108,8 +110,8 @@ object MandelbrotApp {
                         // If the point is within the set (ie. already calculated), no need to re-calculate
                         if (matrix.get(x, y) != ColorCoder.INSIDE_COLOR) {
                             val rangeForPoint = matrix.pixelToRange(x, y)
-                            mandelbrot.calculateMandelbrotSet(rangeForPoint) { n, rxr -> matrix.set(x, y, toColor(n, rxr)) }
-//                        mandelbrot.calculateJuliaSet(rangeForPoint, cPoint) { n, rxr -> matrix.set(x, y, toColor(n, rxr)) }
+//                            mandelbrot.calculateMandelbrotSet(rangeForPoint) { matrix.set(x, y, toColor(it)) }
+                        mandelbrot.calculateJuliaSet(rangeForPoint, cPoint) { matrix.set(x, y, toColor(it)) }
                         }
                     }
                 }
@@ -120,8 +122,9 @@ object MandelbrotApp {
         jobs.forEach { it.join() }
     }
 
-    private fun toColor(n:Int, rxr:Double): Int {
-        return colorCoders[colorCoderIndex].toRGB(n, rxr)
+    private fun toColor(r: Mandelbrot.Result): Int {
+        return simple3DColorCoder.toRGB(r.n, r.rxr, r.z, r.der)
+        //return colorCoders[colorCoderIndex].toRGB(r.n, r.rxr)
     }
 
     private fun doCalculateAndRender() {

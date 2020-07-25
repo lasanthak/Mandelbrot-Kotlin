@@ -18,25 +18,6 @@ interface ColorCoder {
      */
     fun toRGB(n: Int, rxr: Double): Int
 
-    /**
-     * Encodes a given red, green, and blue components (with range 0 to 255)
-     * into and sRGB encoded integer.
-     */
-    fun encodeColor(r: Int, g: Int, b: Int): Int {
-        return (r shl 16) or (g shl 8) or b
-    }
-
-    /**
-     * Decodes an integer that has RGB components encoded in as an sRGB
-     * integer into it's individual components.
-     */
-    fun decodeColor(value: Int): Triple<Int, Int, Int> {
-        val r = (value and R_MASK) shr 16
-        val g = (value and G_MASK) shr 8
-        val b = value and B_MASK
-        return Triple(r, g, b)
-    }
-
     companion object {
         // 00000000,11111111,00000000,00000000
         const val R_MASK = 0x00ff0000
@@ -49,5 +30,24 @@ interface ColorCoder {
 
         // Default color (black) for non-escaping points (i.e. within the set)
         const val INSIDE_COLOR = 0x01000000
+
+        /**
+         * Encodes a given red, green, and blue components (with range 0 to 255)
+         * into and sRGB encoded integer.
+         */
+        fun encodeColor(r: Int, g: Int, b: Int): Int {
+            return (r shl 16) or (g shl 8) or b
+        }
+
+        /**
+         * Decodes an integer that has RGB components encoded in as an sRGB
+         * integer into it's individual components.
+         */
+        fun decodeColor(value: Int): Triple<Int, Int, Int> {
+            val r = (value and R_MASK) shr 16
+            val g = (value and G_MASK) shr 8
+            val b = value and B_MASK
+            return Triple(r, g, b)
+        }
     }
 }
