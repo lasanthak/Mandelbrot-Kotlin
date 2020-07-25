@@ -111,8 +111,8 @@ object MandelbrotApp {
                         // If the point is within the set (ie. already calculated), no need to re-calculate
                         if (matrix.get(x, y) != ColorCoder.INSIDE_COLOR) {
                             val rangeForPoint = matrix.pixelToRange(x, y)
-                            mandelbrot.calculateMandelbrotSet(rangeForPoint) { matrix.set(x, y, toColor(it)) }
-//                            mandelbrot.calculateJuliaSet(rangeForPoint, cPoint) { matrix.set(x, y, toColor(it)) }
+//                            mandelbrot.calculateMandelbrotSet(rangeForPoint) { matrix.set(x, y, toColor(it)) }
+                            mandelbrot.calculateJuliaSet(rangeForPoint, cPoint) { matrix.set(x, y, toColor(it)) }
                         }
                     }
                 }

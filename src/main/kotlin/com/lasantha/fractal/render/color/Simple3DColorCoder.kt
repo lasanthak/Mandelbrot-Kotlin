@@ -9,9 +9,10 @@ import kotlin.math.sqrt
 class Simple3DColorCoder(override val maxN: Int):ColorCoder {
     private val h2 = 1.4
     private val h2PlusOne = h2 + 1
-    private val angle = 35 * PI / 180
-    private val vx = cos(angle)
-    private val vy = sin(angle)
+    private val angleD = 35
+    private val angleR = angleD * PI / 180
+    private val vx = cos(angleR)
+    private val vy = sin(angleR)
 
     override fun toRGB(r:Result): Int {
         if (r.n >= maxN) {
