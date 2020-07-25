@@ -39,7 +39,7 @@ object MandelbrotApp {
 //    private const val h = 1800
 
     // Mandelbrot Set
-//    private var matrix = DoubleMatrix(w, h, -0.5, 0.0, 0.0025)
+    private var matrix = DoubleMatrix(w, h, -0.5, 0.0, 0.0025)
 //    private var matrix = DoubleMatrix(w, h, -1.2228125, 0.3509375, 1.5625E-4)
 //    private var matrix = DoubleMatrix(w, h, -1.1613729858398436, 0.29056549072265603, 1.5258789062509252E-7)
 //    private var matrix = DoubleMatrix(w, h, -1.1613719461672, 0.2905672235228119, 9.313225769284432E-12)
@@ -69,7 +69,7 @@ object MandelbrotApp {
 
 
     // Julia set
-    private var matrix = DoubleMatrix(w, h, 0.0, 0.0, 0.0025)
+//    private var matrix = DoubleMatrix(w, h, 0.0, 0.0, 0.0025)
 //    private val cPoint = Pair(-0.8, 0.156) // (blending factor > 300)
 //    private val cPoint = Pair(-0.7269, 0.1889)
 //    private val cPoint = Pair(-0.4, 0.6)
@@ -111,8 +111,8 @@ object MandelbrotApp {
                         // If the point is within the set (ie. already calculated), no need to re-calculate
                         if (matrix.get(x, y) != ColorCoder.INSIDE_COLOR) {
                             val rangeForPoint = matrix.pixelToRange(x, y)
-//                            mandelbrot.calculateMandelbrotSet(rangeForPoint) { matrix.set(x, y, toColor(it)) }
-                            mandelbrot.calculateJuliaSet(rangeForPoint, cPoint) { matrix.set(x, y, toColor(it)) }
+                            mandelbrot.calculateMandelbrotSet(rangeForPoint) { matrix.set(x, y, toColor(it)) }
+//                            mandelbrot.calculateJuliaSet(rangeForPoint, cPoint) { matrix.set(x, y, toColor(it)) }
                         }
                     }
                 }
