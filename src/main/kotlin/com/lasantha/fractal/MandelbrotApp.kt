@@ -1,6 +1,7 @@
 package com.lasantha.fractal
 
 import com.lasantha.fractal.calculate.Mandelbrot
+import com.lasantha.fractal.calculate.Result
 import com.lasantha.fractal.matrix.DoubleMatrix
 import com.lasantha.fractal.render.JFrameRenderer
 import com.lasantha.fractal.render.Renderer
@@ -29,7 +30,7 @@ object MandelbrotApp {
 
     private const val maxN = 2000
     private const val escapeRadius = 1000.0
-    private const val samplesSqrt = 5 // 5, 4
+    private const val samplesSqrt = 3 // 5, 4
     private const val blendingFactor = 5.45656 //111.0, 7.389 (e^2), 6.7, 5.45656 (2e), 4.3, 2.71828 (e)
 
     private const val w = 1920
@@ -79,12 +80,12 @@ object MandelbrotApp {
 //    private val cPoint = Pair(-0.1, 0.651)
 
     private val colorCoders = listOf(
-            RGBColorCoder(maxN, blendingFactor),
-            SimpleGrayColorCoder(maxN),
-            GrayColorCoder(maxN, blendingFactor)
+        Simple3DColorCoder(maxN),
+        RGBColorCoder(maxN, blendingFactor),
+        SimpleGrayColorCoder(maxN),
+        GrayColorCoder(maxN, blendingFactor)
     )
     private var colorCoderIndex = 0
-    private val simple3DColorCoder = Simple3DColorCoder(maxN)
 
     private val renderer: Renderer<Int> = JFrameRenderer(w, h, "Mandelbrot Set")
 
@@ -110,8 +111,8 @@ object MandelbrotApp {
                         // If the point is within the set (ie. already calculated), no need to re-calculate
                         if (matrix.get(x, y) != ColorCoder.INSIDE_COLOR) {
                             val rangeForPoint = matrix.pixelToRange(x, y)
-//                            mandelbrot.calculateMandelbrotSet(rangeForPoint) { matrix.set(x, y, toColor(it)) }
-                        mandelbrot.calculateJuliaSet(rangeForPoint, cPoint) { matrix.set(x, y, toColor(it)) }
+                            mandelbrot.calculateMandelbrotSet(rangeForPoint) { matrix.set(x, y, toColor(it)) }
+//                            mandelbrot.calculateJuliaSet(rangeForPoint, cPoint) { matrix.set(x, y, toColor(it)) }
                         }
                     }
                 }
@@ -122,9 +123,8 @@ object MandelbrotApp {
         jobs.forEach { it.join() }
     }
 
-    private fun toColor(r: Mandelbrot.Result): Int {
-        return simple3DColorCoder.toRGB(r.n, r.rxr, r.z, r.der)
-        //return colorCoders[colorCoderIndex].toRGB(r.n, r.rxr)
+    private fun toColor(r: Result): Int {
+        return colorCoders[colorCoderIndex].toRGB(r)
     }
 
     private fun doCalculateAndRender() {

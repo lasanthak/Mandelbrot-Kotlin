@@ -1,5 +1,7 @@
 package com.lasantha.fractal.render.color
 
+import com.lasantha.fractal.calculate.Result
+
 /**
  * The sRGB integer encodes RGB components into a single integer.
  * These are the bit position indices (inclusive):
@@ -12,11 +14,9 @@ interface ColorCoder {
     val maxN: Int
 
     /**
-     * @param n Number of iteration
-     * @param rxr Square of escape radius (for the point when escapes)
-     * @return The RGB encoded integer for the color
+     * Returns the RGB encoded integer for the color
      */
-    fun toRGB(n: Int, rxr: Double): Int
+    fun toRGB(r: Result): Int
 
     companion object {
         // 00000000,11111111,00000000,00000000
@@ -29,7 +29,7 @@ interface ColorCoder {
         const val B_MASK = 0x000000ff
 
         // Default color (black) for non-escaping points (i.e. within the set)
-        const val INSIDE_COLOR = 0x01000000
+        const val INSIDE_COLOR = 0x01202020
 
         /**
          * Encodes a given red, green, and blue components (with range 0 to 255)

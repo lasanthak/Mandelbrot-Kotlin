@@ -87,7 +87,4 @@ class Mandelbrot(private val maxN: Int,
 
         return Result(n, rxr, Pair(x, y), Pair(dx, dy))
     }
-
-    data class Result(val n: Int, val rxr: Double, val z: Pair<Double, Double>, val der: Pair<Double, Double>)
-
 }

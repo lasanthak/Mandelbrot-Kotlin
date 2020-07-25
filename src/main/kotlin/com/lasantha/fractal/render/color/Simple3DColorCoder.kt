@@ -1,23 +1,24 @@
 package com.lasantha.fractal.render.color
 
+import com.lasantha.fractal.calculate.Result
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-class Simple3DColorCoder(private val maxN: Int) {
+class Simple3DColorCoder(override val maxN: Int):ColorCoder {
     private val h2 = 1.4
     private val h2PlusOne = h2 + 1
     private val angle = 35 * PI / 180
     private val vx = cos(angle)
     private val vy = sin(angle)
 
-    fun toRGB(n: Int, rxr: Double, z: Pair<Double, Double>, der: Pair<Double, Double>): Int {
-        if (n >= maxN) {
+    override fun toRGB(r:Result): Int {
+        if (r.n >= maxN) {
             return ColorCoder.INSIDE_COLOR
         }
 
-        val u = div(z, der)
+        val u = div(r.z, r.der)
         val modU = modulus(u)
         val wx = u.first / modU
         val wy = u.second / modU
@@ -27,7 +28,7 @@ class Simple3DColorCoder(private val maxN: Int) {
     }
 
     /**
-     * z1/z2 = ( (x1*x2+y1*y2)+(x2*y1-x1*y2) ) / (x2^2 + y2^2)
+     * a/b = ((a.x * b.x + a.y * b.y) + (b.x * a.y - a.x * b.y)) / (b.x^2 + b.y^2)
      */
     private fun div(a: Pair<Double, Double>, b: Pair<Double, Double>): Pair<Double, Double> {
         val d = b.first * b.first + b.second * b.second
@@ -36,7 +37,10 @@ class Simple3DColorCoder(private val maxN: Int) {
         return Pair(x, y)
     }
 
+    /**
+     * |a| = sqrt(a.x^2 + a.y^2)
+     */
     private fun modulus(a: Pair<Double, Double>): Double {
-        return sqrt(a.first * a.first + a.second * a.second);
+        return sqrt(a.first * a.first + a.second * a.second)
     }
 }
