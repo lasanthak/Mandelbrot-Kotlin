@@ -74,8 +74,8 @@ object MandelbrotApp {
 //    private val cPoint = Pair(-0.7269, 0.1889)
 //    private val cPoint = Pair(-0.4, 0.6)
 //    private val cPoint = Pair(-0.8, 0.156)
-//    private val cPoint = Pair(0.285, 0.01)
-    private val cPoint = Pair(-0.74543, 0.11301) // (blending factor > 212) ***
+    private val cPoint = Pair(0.285, 0.01)
+//    private val cPoint = Pair(-0.74543, 0.11301) // (blending factor > 212) *
 //    private val cPoint = Pair(-0.75, 0.11)
 //    private val cPoint = Pair(-0.1, 0.651)
 
@@ -165,7 +165,7 @@ object MandelbrotApp {
         matrix = DoubleMatrix(w, h, midX, midY, pixelSize)
         zoomFactor++
 
-        println("┈┈┈┈┈┈┈┈┈[ ${zoomFactor}x Zoom, ${df.format(4.0.pow(zoomFactor))}x Magnification]┈┈┈┈┈┈┈┈┈")
+        println("┈┈┈┈┈┈┈┈┈[ Zoom: ${zoomFactor}x, Magnification: ${df.format(4.0.pow(zoomFactor))}x ]┈┈┈┈┈┈┈┈┈")
         println("($w, $h, $midX, $midY, $pixelSize)")
         doCalculateAndRender()
     }

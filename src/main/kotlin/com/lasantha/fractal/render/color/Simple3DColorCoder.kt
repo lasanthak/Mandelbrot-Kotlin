@@ -3,6 +3,7 @@ package com.lasantha.fractal.render.color
 import com.lasantha.fractal.calculate.Result
 import kotlin.math.PI
 import kotlin.math.cos
+import kotlin.math.round
 import kotlin.math.sin
 import kotlin.math.sqrt
 
@@ -24,7 +25,7 @@ class Simple3DColorCoder(override val maxN: Int):ColorCoder {
         val wx = u.first / modU
         val wy = u.second / modU
         val t = (wx * vx + wy * vy + h2) / h2PlusOne
-        val gray = if (t < 0) 0 else (256 * t).toInt()
+        val gray = if (t < 0) 0 else round(255 * t).toInt()
         return ColorCoder.encodeColor(gray, gray, gray)
     }
 
