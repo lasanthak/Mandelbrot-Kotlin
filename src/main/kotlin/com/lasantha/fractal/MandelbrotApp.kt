@@ -15,11 +15,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.lang.Double.max
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
 import kotlin.math.ceil
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 
@@ -35,11 +35,11 @@ object MandelbrotApp {
 
     private const val w = 1920
     private const val h = 1080
-//    private const val w = 2880
-//    private const val h = 1800
+//    private const val w = 2880 * 4
+//    private const val h = 1800 * 4
 
     // Mandelbrot Set
-    private var matrix = DoubleMatrix(w, h, -0.5, 0.0, 0.0025)
+    private var matrix = DoubleMatrix(w, h, -0.75, 0.0, max(2.7/h, 4.7/w))
 //    private var matrix = DoubleMatrix(w, h, -1.2228125, 0.3509375, 1.5625E-4)
 //    private var matrix = DoubleMatrix(w, h, -1.1613729858398436, 0.29056549072265603, 1.5258789062509252E-7)
 //    private var matrix = DoubleMatrix(w, h, -1.1613719461672, 0.2905672235228119, 9.313225769284432E-12)
@@ -69,13 +69,13 @@ object MandelbrotApp {
 
 
     // Julia set
-//    private var matrix = DoubleMatrix(w, h, 0.0, 0.0, 0.0025)
+//    private var matrix = DoubleMatrix(w, h, 0.0, 0.0, max(2.7/h, 4.7/w))
 //    private val cPoint = Pair(-0.8, 0.156) // (blending factor > 300)
 //    private val cPoint = Pair(-0.7269, 0.1889)
 //    private val cPoint = Pair(-0.4, 0.6)
 //    private val cPoint = Pair(-0.8, 0.156)
-    private val cPoint = Pair(0.285, 0.01)
-//    private val cPoint = Pair(-0.74543, 0.11301) // (blending factor > 212) *
+//    private val cPoint = Pair(0.285, 0.01)
+    private val cPoint = Pair(-0.74543, 0.11301) // (blending factor > 212) *
 //    private val cPoint = Pair(-0.75, 0.11)
 //    private val cPoint = Pair(-0.1, 0.651)
 
@@ -100,7 +100,7 @@ object MandelbrotApp {
     private fun doParallelCalculations() = runBlocking {
         val jobs = mutableListOf<Job>()
 
-        val noOfCoroutines = h/2
+        val noOfCoroutines = 540
         val rowsPerCoroutine = ceil(h.toDouble() / noOfCoroutines).toInt()
         repeat(noOfCoroutines) { i ->
             val start = i * rowsPerCoroutine

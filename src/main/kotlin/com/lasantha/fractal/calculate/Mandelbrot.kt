@@ -73,7 +73,7 @@ class Mandelbrot(private val maxN: Int,
             n++
 
             val newDx = 2 * (dx * x - dy * y) + 1
-            dy = 2 * (dx * y + dy * x)
+            dy = 2 * (dx * y + dy * x) + 1
             dx = newDx
 
             val xx = x * x

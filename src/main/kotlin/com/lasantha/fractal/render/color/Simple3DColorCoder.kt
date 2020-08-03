@@ -1,21 +1,17 @@
 package com.lasantha.fractal.render.color
 
 import com.lasantha.fractal.calculate.Result
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.round
-import kotlin.math.sin
-import kotlin.math.sqrt
+import kotlin.math.*
 
-class Simple3DColorCoder(override val maxN: Int):ColorCoder {
-    private val h2 = 1.4
-    private val h2PlusOne = h2 + 1
+class Simple3DColorCoder(override val maxN: Int) : ColorCoder {
     private val angleD = 35
     private val angleR = angleD * PI / 180
+    private val h2 = 1.4
+    private val h2PlusOne = h2 + 1
     private val vx = cos(angleR)
     private val vy = sin(angleR)
 
-    override fun toRGB(r:Result): Int {
+    override fun toRGB(r: Result): Int {
         if (r.n >= maxN) {
             return ColorCoder.INSIDE_COLOR
         }
@@ -25,8 +21,21 @@ class Simple3DColorCoder(override val maxN: Int):ColorCoder {
         val wx = u.first / modU
         val wy = u.second / modU
         val t = (wx * vx + wy * vy + h2) / h2PlusOne
-        val gray = if (t < 0) 0 else round(255 * t).toInt()
-        return ColorCoder.encodeColor(gray, gray, gray)
+//        return interpolateColor(t, Triple(255, 234, 128)) // gold
+//        return interpolateColor(t, Triple(230,255,204)) // light green
+        return interpolateColor(t)
+    }
+
+    private fun interpolateColor(t: Double, baseColorRGB: Triple<Int, Int, Int>? = null): Int {
+        if (baseColorRGB != null) {
+            val r = if (t < 0) 0 else round(baseColorRGB.first * t).toInt()
+            val g = if (t < 0) 0 else round(baseColorRGB.second * t).toInt()
+            val b = if (t < 0) 0 else round(baseColorRGB.third * t).toInt()
+            return ColorCoder.encodeColor(r, g, b)
+        }
+
+        val grey = if (t < 0) 0 else round(255 * t).toInt()
+        return ColorCoder.encodeColor(grey, grey, grey)
     }
 
     /**
