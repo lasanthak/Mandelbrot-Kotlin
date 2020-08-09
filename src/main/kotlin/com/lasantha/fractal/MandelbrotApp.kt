@@ -30,11 +30,13 @@ object MandelbrotApp {
 
     private const val maxN = 2000
     private const val escapeRadius = 1000.0
-    private const val samplesSqrt = 3 // 5, 4
+    private const val samplesSqrt = 1 // 3, 5, 4
     private const val blendingFactor = 5.45656 //111.0, 7.389 (e^2), 6.7, 5.45656 (2e), 4.3, 2.71828 (e)
 
-    private const val w = 1920
-    private const val h = 1080
+//    private const val w = 1920
+//    private const val h = 1080
+    private const val w = 1920 * 4
+    private const val h = 1080 * 4
 //    private const val w = 2880 * 4
 //    private const val h = 1800 * 4
 
@@ -149,20 +151,20 @@ object MandelbrotApp {
     /**
      * Zooms into a 1/4 of a region (i.e. 4x magnification).
      */
-    private fun doZoomIn(x: Int, y: Int) {
-        val r1 = matrix.pixelToRange(x - w / 8, y - h / 8)
+    private fun doZoomIn(x: Int, y: Int, w: Int, h: Int) {
+        val r1 = matrix.pixelToRange(x - w / 2, y - h / 2)
         val x1 = (r1.x1 + r1.x2) / 2
         val y1 = (r1.y1 + r1.y2) / 2
 
-        val r2 = matrix.pixelToRange(x + w / 8, y + h / 8)
+        val r2 = matrix.pixelToRange(x + w / 2, y + h / 2)
         val x2 = (r2.x1 + r2.x2) / 2
         val y2 = (r2.y1 + r2.y2) / 2
 
         val midX = (x1 + x2) / 2
         val midY = (y1 + y2) / 2
-        val pixelSize = max((x2 - x1) / w, (y1 - y2) / h)
+        val pixelSize = max((x2 - x1) / matrix.widthInPixels, (y1 - y2) / matrix.heightInPixels)
 
-        matrix = DoubleMatrix(w, h, midX, midY, pixelSize)
+        matrix = DoubleMatrix(matrix.widthInPixels, matrix.heightInPixels, midX, midY, pixelSize)
         zoomFactor++
 
         println("┈┈┈┈┈┈┈┈┈[ Zoom: ${zoomFactor}x, Magnification: ${df.format(4.0.pow(zoomFactor))}x ]┈┈┈┈┈┈┈┈┈")

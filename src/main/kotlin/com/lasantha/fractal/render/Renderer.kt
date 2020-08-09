@@ -9,7 +9,7 @@ interface Renderer<T> {
 
     fun render(matrix: Matrix<*, T>)
 
-    fun zoomInHandler(doZoomIn: (x: Int, y: Int) -> Unit)
+    fun zoomInHandler(doZoomIn: (x: Int, y: Int, w: Int, h: Int) -> Unit)
 
     fun reRenderHandler(doReRender: () -> Unit)
 

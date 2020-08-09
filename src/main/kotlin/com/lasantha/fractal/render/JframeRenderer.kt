@@ -3,11 +3,7 @@
 package com.lasantha.fractal.render
 
 import com.lasantha.fractal.matrix.Matrix
-import java.awt.Color
-import java.awt.Cursor
-import java.awt.Graphics
-import java.awt.Graphics2D
-import java.awt.Rectangle
+import java.awt.*
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 import java.awt.event.MouseEvent
@@ -16,8 +12,7 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
 import javax.imageio.ImageIO
-import javax.swing.JFrame
-import javax.swing.JOptionPane
+import javax.swing.*
 
 class JFrameRenderer(
         override val width: Int,
@@ -25,20 +20,23 @@ class JFrameRenderer(
         override val titleText: String
 ) : Renderer<Int> {
 
-    private val frame = KJFrame(width, height, titleText)
-    private val rectangle = Rectangle(0, 0, width / 4, height / 4)
-    private var doZoomIn: ((x: Int, y: Int) -> Unit)? = null
+    private val imageDimension = Dimension(width, height)
+    private val windowDimension = Toolkit.getDefaultToolkit().screenSize
+    private val frame = FractalFrame(imageDimension, windowDimension, titleText)
+    private val rectangle = Rectangle(0, 0, windowDimension.width / 4, windowDimension.height / 4)
+    private var doZoomIn: ((x: Int, y: Int, w: Int, h: Int) -> Unit)? = null
     private var doReRender: (() -> Unit)? = null
 
     override fun render(matrix: Matrix<*, Int>) {
+        val image = frame.panel.image
         if (matrix.widthInPixels > width || matrix.heightInPixels > height) {
             throw IllegalArgumentException("Invalid dimensions")
         }
-        matrix.forEach { sRGBValue, x, y -> frame.image.setRGB(x, y, sRGBValue) }
+        matrix.forEach { sRGBValue, x, y -> image.setRGB(x, y, sRGBValue) }
         frame.repaint()
     }
 
-    override fun zoomInHandler(doZoomIn: (x: Int, y: Int) -> Unit) {
+    override fun zoomInHandler(doZoomIn: (x: Int, y: Int, w: Int, h: Int) -> Unit) {
         this.doZoomIn = doZoomIn
     }
 
@@ -51,9 +49,10 @@ class JFrameRenderer(
     }
 
     private fun saveImage() {
+        val image = frame.panel.image
         val fileName = "${System.currentTimeMillis()}.png"
         try {
-            ImageIO.write(frame.image, "png", File(fileName))
+            ImageIO.write(image, "png", File(fileName))
             println("Image saved to: $fileName")
         } catch (ex: IOException) {
             throw RuntimeException(ex)
@@ -76,12 +75,12 @@ class JFrameRenderer(
             override fun keyReleased(e: KeyEvent) {}
         })
 
-        frame.addMouseListener(object : MouseListener {
+        frame.panel.addMouseListener(object : MouseListener {
             override fun mouseClicked(e: MouseEvent) {
                 when (e.button) {
                     MouseEvent.BUTTON1 -> {
                         if (e.clickCount == 2) {
-                            doZoomIn?.invoke(e.x, e.y)
+                            doZoomIn?.invoke(e.x, e.y, rectangle.width, rectangle.height)
                         }
                     }
                     MouseEvent.BUTTON3 -> {
@@ -94,16 +93,11 @@ class JFrameRenderer(
             override fun mousePressed(e: MouseEvent) {
                 when (e.button) {
                     MouseEvent.BUTTON1 -> {
-                        val x1 = e.x - rectangle.width / 2;
-                        val y1 = e.y - rectangle.height / 2;
-                        val x2 = rectangle.width + 1
-                        val y2 = rectangle.height + 1
-                        rectangle.setLocation(x1, y1)
-                        frame.rectangle = rectangle
-                        frame.repaint(x1, y1, x2, y1)
-                        frame.repaint(x1, y1, x2, y2)
-                        frame.repaint(x1, y2, x2, y2)
-                        frame.repaint(x2, y1, x2, y2)
+                        val x = e.x - rectangle.width / 2
+                        val y = e.y - rectangle.height / 2
+                        rectangle.setLocation(x, y)
+                        frame.panel.rectangle = rectangle
+                        repaintRectangleArea(rectangle)
                         frame.cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR)
                     }
                     else -> {}
@@ -113,12 +107,23 @@ class JFrameRenderer(
             override fun mouseReleased(e: MouseEvent) {
                 when (e.button) {
                     MouseEvent.BUTTON1 -> {
-                        frame.rectangle = null
+                        frame.panel.rectangle = null
+                        repaintRectangleArea(rectangle)
                         frame.cursor = Cursor.getDefaultCursor()
-                        frame.repaint()
                     }
                     else -> {}
                 }
+            }
+
+            private fun repaintRectangleArea(rectangle: Rectangle) {
+                val x1 = rectangle.x
+                val y1 = rectangle.y
+                val x2 = rectangle.width + 1
+                val y2 = rectangle.height + 1
+                frame.panel.repaint(x1, y1, x2, y1)
+                frame.panel.repaint(x1, y1, x2, y2)
+                frame.panel.repaint(x1, y2, x2, y2)
+                frame.panel.repaint(x2, y1, x2, y2)
             }
 
             override fun mouseEntered(e: MouseEvent) {}
@@ -127,18 +132,32 @@ class JFrameRenderer(
     }
 }
 
-private class KJFrame(width: Int, height: Int, titleText: String) : JFrame(titleText) {
-    val image = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-    var rectangle: Rectangle? = null
+private class FractalFrame(imageDimension: Dimension,
+                           windowDimension: Dimension,
+                           titleText: String) : JFrame(titleText) {
+    val panel = FractalPanel(imageDimension)
+    val scroller = JScrollPane(panel)
 
     init {
         this.defaultCloseOperation = EXIT_ON_CLOSE
-        this.bounds = Rectangle(0, 0, width, height)
+        this.setSize(windowDimension.width, windowDimension.height)
+        this.add(scroller)
         this.isVisible = true
         this.requestFocus()
     }
+}
 
-    override fun paint(g: Graphics?) {
+private class FractalPanel(imageDimension: Dimension) : JPanel(false) {
+    val image = BufferedImage(imageDimension.width, imageDimension.height, BufferedImage.TYPE_INT_RGB)
+    var rectangle: Rectangle? = null
+
+    init {
+        this.preferredSize = imageDimension
+        this.revalidate()
+    }
+
+    override fun paintComponent(g: Graphics?) {
+        super.paintComponent(g)
         val g2 = g as Graphics2D
         g2.drawImage(image, null, 0, 0)
 
