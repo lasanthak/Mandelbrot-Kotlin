@@ -33,12 +33,11 @@ object MandelbrotApp {
     private const val samplesSqrt = 1 // 3, 5, 4
     private const val blendingFactor = 5.45656 //111.0, 7.389 (e^2), 6.7, 5.45656 (2e), 4.3, 2.71828 (e)
 
-//    private const val w = 1920
-//    private const val h = 1080
-    private const val w = 1920 * 4
-    private const val h = 1080 * 4
-//    private const val w = 2880 * 4
-//    private const val h = 1800 * 4
+    private const val pixelMultiplier = 1 // 1, 2, 4 (to get a high def images, increase it over 1)
+    private const val w = 1920 * pixelMultiplier
+    private const val h = 1080 * pixelMultiplier
+//    private const val w = 2880 * pixelMultiplier
+//    private const val h = 1800 * pixelMultiplier
 
     // Mandelbrot Set
     private var matrix = DoubleMatrix(w, h, -0.75, 0.0, max(2.7/h, 4.7/w))
