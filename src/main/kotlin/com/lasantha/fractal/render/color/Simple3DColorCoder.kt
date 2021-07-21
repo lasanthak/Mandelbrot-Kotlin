@@ -11,12 +11,12 @@ class Simple3DColorCoder(override val maxN: Int) : ColorCoder {
     private val vx = cos(angleR)
     private val vy = sin(angleR)
 
-    override fun toRGB(r: Result): Int {
-        if (r.n >= maxN) {
+    override fun toRGB(res: Result): Int {
+        if (res.n >= maxN) {
             return ColorCoder.INSIDE_COLOR
         }
 
-        val u = div(r.z, r.der)
+        val u = div(res.z, res.der)
         val modU = modulus(u)
         val wx = u.first / modU
         val wy = u.second / modU

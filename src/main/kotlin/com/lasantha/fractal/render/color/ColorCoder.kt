@@ -16,7 +16,7 @@ interface ColorCoder {
     /**
      * Returns the RGB encoded integer for the color
      */
-    fun toRGB(r: Result): Int
+    fun toRGB(res: Result): Int
 
     companion object {
         // 00000000,11111111,00000000,00000000

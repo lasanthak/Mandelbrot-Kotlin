@@ -13,12 +13,12 @@ import kotlin.math.round
 class GrayColorCoder(override val maxN: Int, private val blendingFactor: Double) : ColorCoder {
     private val twoPI = 2 * PI
 
-    override fun toRGB(r: Result): Int {
-        if (r.n >= maxN) {
+    override fun toRGB(res: Result): Int {
+        if (res.n >= maxN) {
             return ColorCoder.INSIDE_COLOR
         }
 
-        val v = ln(ln(r.rxr) / 2.0.pow(r.n)) / blendingFactor
+        val v = ln(ln(res.rxr) / 2.0.pow(res.n)) / blendingFactor
         val gray = round(127.5 * (1 + cos(twoPI * v))).toInt()
 
         return ColorCoder.encodeColor(gray, gray, gray)
