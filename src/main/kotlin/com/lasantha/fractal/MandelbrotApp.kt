@@ -15,9 +15,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.Locale
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -25,7 +22,6 @@ import kotlin.math.pow
 
 
 object MandelbrotApp {
-    private val df: DecimalFormat = DecimalFormat("#,###")
     private var zoomFactor = 1
 
     private const val maxN = 2000
@@ -93,7 +89,6 @@ object MandelbrotApp {
     private val mandelbrot = Mandelbrot(maxN, escapeRadius, samplesSqrt)
 
     init {
-        df.decimalFormatSymbols = DecimalFormatSymbols(Locale.getDefault())
         renderer.zoomInHandler(::doZoomIn)
         renderer.reRenderHandler(::doReRender)
     }
@@ -166,7 +161,7 @@ object MandelbrotApp {
         matrix = DoubleMatrix(matrix.widthInPixels, matrix.heightInPixels, midX, midY, pixelSize)
         zoomFactor++
 
-        println("┈┈┈┈┈┈┈┈┈[ Zoom: ${zoomFactor}x, Magnification: ${df.format(4.0.pow(zoomFactor))}x ]┈┈┈┈┈┈┈┈┈")
+        println("┈┈┈┈┈┈┈┈┈[ Zoom: ${zoomFactor} X, Magnification: ${4.0.pow(zoomFactor)} X ]┈┈┈┈┈┈┈┈┈")
         println("($w, $h, $midX, $midY, $pixelSize)")
         doCalculateAndRender()
     }
