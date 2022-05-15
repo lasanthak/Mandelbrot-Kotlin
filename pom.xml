@@ -22,7 +22,7 @@
         so the Kotlin compiler reports a warning when you use coroutines in your project.
         To turn off the warning, add the following block to your pom.xml file -->
         <experimentalCoroutines>enable</experimentalCoroutines>
-        <junit.version>4.13.1</junit.version>
+        <junit.version>4.13.2</junit.version>
     </properties>
 
     <dependencies>
