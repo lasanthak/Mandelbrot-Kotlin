@@ -13,7 +13,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>1.6.21</kotlin.version>
+        <kotlin.version>1.7.10</kotlin.version>
         <kotlinx.version>1.6.1</kotlinx.version>
         <kotlin.code.style>official</kotlin.code.style>
         <!-- To make your builds faster, enable incremental compilation for Maven -->
