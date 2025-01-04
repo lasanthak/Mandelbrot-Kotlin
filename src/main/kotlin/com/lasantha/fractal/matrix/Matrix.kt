@@ -45,9 +45,3 @@ interface Matrix<out R : Number, T> {
  * y2: smallest possible y value for the range
  */
 data class MatrixRange<out R : Number>(val x1: R, val x2: R, val y1: R, val y2: R)
-
-/**
- * A single point in a range
- */
-data class MatrixPoint<out R : Number>(val x: R, val y: R)
-

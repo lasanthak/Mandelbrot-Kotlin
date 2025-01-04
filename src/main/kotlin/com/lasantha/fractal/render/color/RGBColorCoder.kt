@@ -16,7 +16,7 @@ class RGBColorCoder(override val maxN: Int, private val blendingFactor: Double) 
             return ColorCoder.INSIDE_COLOR
         }
 
-        val v = ln(ln(res.rxr) / 2.0.pow(res.n)) / blendingFactor
+        val v = ln(ln(res.rr) / 2.0.pow(res.n)) / blendingFactor
         val r = round(127.5 * (1 - cos(rFactor * v))).toInt()
         val g = round(127.5 * (1 - cos(gFactor * v))).toInt()
         val b = round(127.5 * (1 - cos(bFactor * v))).toInt()

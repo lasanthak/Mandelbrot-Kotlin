@@ -39,7 +39,7 @@ class Simple3DColorCoder(override val maxN: Int) : ColorCoder {
     }
 
     /**
-     * a/b = ((a.x * b.x + a.y * b.y) + (b.x * a.y - a.x * b.y)) / (b.x^2 + b.y^2)
+     * a/b = ((a.x * b.x + a.y * b.y) + i(b.x * a.y - a.x * b.y)) / (b.x^2 + b.y^2)
      */
     private fun div(a: Pair<Double, Double>, b: Pair<Double, Double>): Pair<Double, Double> {
         val d = b.first * b.first + b.second * b.second

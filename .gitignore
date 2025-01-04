@@ -16,3 +16,5 @@
 
 target
 *.png
+
+dependency-reduced-pom.xml
