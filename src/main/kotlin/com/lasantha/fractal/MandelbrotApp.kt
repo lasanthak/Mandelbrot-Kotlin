@@ -26,21 +26,21 @@ import kotlin.math.pow
 object MandelbrotApp {
     private const val maxIterations = 1000
     private const val escapeRadius = 10.0
-    private const val subPixelCountSqrt = 2 // 1 for just midpoint, 2 for 4 point, 3 for 9 points, etc.
+    private const val subPixelCountSqrt = 1 // 1 for just midpoint, 2 for 4 point, 3 for 9 points, etc.
 
     private var zoomFactor = 1
-    private const val blendingFactor = 7.389 //111.0, 7.389 (e^2), 6.7, 5.45656 (2e), 4.3, 2.71828 (e)
+    private const val blendingFactor = 7.5 //111.0, 7.389 (e^2), 6.7, 5.45656 (2e), 4.3, 2.71828 (e)
 
     private const val w = 1920
 //    private const val w = 2880
     private const val h = 1080
 //    private const val h = 1800
 
-    private val juliaSetCPoint = Pair(0.285, 0.01)
+    private val juliaSetCPoint = Pair(-0.77, 0.13)
 
     private val mandelbrotSet = MandelbrotSet(maxIterations, escapeRadius, subPixelCountSqrt)
     private val juliaSet = JuliaSet(juliaSetCPoint, maxIterations, escapeRadius, subPixelCountSqrt)
-    private val fractal = mandelbrotSet
+    private val fractal = juliaSet // mandelbrotSet, juliaSet
 
     private var matrix = if (fractal.type == FractalType.MANDELBROT_SET)
         DoubleMatrix(w, h, -0.75, 0.0, max(2.7 / h, 4.7 / w))
@@ -54,7 +54,7 @@ object MandelbrotApp {
 //    Pair(-0.8, 0.156)
 //    Pair(0.285, 0.01)
 //    Pair(-0.74543, 0.11301) // (blending factor > 212) *
-//    Pair(-0.75, 0.11)
+//    Pair(-0.77, 0.13)
 //    Pair(-0.1, 0.651)
 //    Pair(0.235, 0.01)
 

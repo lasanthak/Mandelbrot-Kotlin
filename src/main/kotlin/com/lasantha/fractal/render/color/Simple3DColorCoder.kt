@@ -4,8 +4,8 @@ import com.lasantha.fractal.calculate.Result
 import kotlin.math.*
 
 class Simple3DColorCoder(override val maxN: Int) : ColorCoder {
-    private val angleD = 35
-    private val angleR = angleD * PI / 180
+    private val angleD = 120.0
+    private val angleR = angleD * PI / 180.0
     private val h2 = 1.4
     private val h2PlusOne = h2 + 1
     private val vx = cos(angleR)
@@ -26,17 +26,17 @@ class Simple3DColorCoder(override val maxN: Int) : ColorCoder {
         return interpolateColor(t)
     }
 
-    private fun interpolateColor(t: Double, baseColorRGB: Triple<Int, Int, Int>? = null): Int {
+    private fun interpolateColor(t: Double, baseColorRGB: Triple<Int, Int, Int>? = null): Int =
         if (baseColorRGB != null) {
             val r = if (t < 0) 0 else round(baseColorRGB.first * t).toInt()
             val g = if (t < 0) 0 else round(baseColorRGB.second * t).toInt()
             val b = if (t < 0) 0 else round(baseColorRGB.third * t).toInt()
-            return ColorCoder.encodeColor(r, g, b)
+            ColorCoder.encodeColor(r, g, b)
+        } else {
+            val grey = if (t < 0) 0 else round(255 * t).toInt()
+            ColorCoder.encodeColor(grey, grey, grey)
         }
 
-        val grey = if (t < 0) 0 else round(255 * t).toInt()
-        return ColorCoder.encodeColor(grey, grey, grey)
-    }
 
     /**
      * a/b = ((a.x * b.x + a.y * b.y) + i(b.x * a.y - a.x * b.y)) / (b.x^2 + b.y^2)

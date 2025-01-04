@@ -71,7 +71,7 @@ interface Fractal {
         var dy = 0.0
         do {
             val newDx = 2.0 * (dx * x - dy * y) + 1.0
-            dy = 2.0 * (dx * y + dy * x) + 1.0
+            dy = 2.0 * (dx * y + dy * x)
             dx = newDx
 
             n++
