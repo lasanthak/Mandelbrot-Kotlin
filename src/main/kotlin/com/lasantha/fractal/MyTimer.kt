@@ -6,7 +6,7 @@ class MyTimer(private val name: String) {
     private val start = System.currentTimeMillis()
     private var last = AtomicLong(start)
 
-    fun tick(stepName: String) {
+    fun logDelta(stepName: String) {
         val now = System.currentTimeMillis()
         val prevLast = last.getAndSet(now);
 

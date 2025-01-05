@@ -1,10 +1,12 @@
 package com.lasantha.fractal
 
+import com.lasantha.fractal.calculate.DoublePointCalculator
 import com.lasantha.fractal.calculate.FractalType
 import com.lasantha.fractal.calculate.JuliaSet
 import com.lasantha.fractal.calculate.MandelbrotSet
-import com.lasantha.fractal.calculate.Result
+import com.lasantha.fractal.calculate.PointResult
 import com.lasantha.fractal.matrix.DoubleMatrix
+import com.lasantha.fractal.matrix.MatrixPoint
 import com.lasantha.fractal.render.JFrameRenderer
 import com.lasantha.fractal.render.Renderer
 import com.lasantha.fractal.render.color.ColorCoder
@@ -26,7 +28,7 @@ import kotlin.math.pow
 object MandelbrotApp {
     private const val maxIterations = 1000
     private const val escapeRadius = 10.0
-    private const val subPixelCountSqrt = 1 // 1 for just midpoint, 2 for 4 point, 3 for 9 points, etc.
+    private const val subPixelCountSqrt = 2 // 1 for just midpoint, 2 for 4 point, 3 for 9 points, etc.
 
     private var zoomFactor = 1
     private const val blendingFactor = 7.5 //111.0, 7.389 (e^2), 6.7, 5.45656 (2e), 4.3, 2.71828 (e)
@@ -36,16 +38,22 @@ object MandelbrotApp {
     private const val h = 1080
 //    private const val h = 1800
 
-    private val juliaSetCPoint = Pair(-0.77, 0.13)
+    private val fractalType = FractalType.MANDELBROT_SET
 
-    private val mandelbrotSet = MandelbrotSet(maxIterations, escapeRadius, subPixelCountSqrt)
-    private val juliaSet = JuliaSet(juliaSetCPoint, maxIterations, escapeRadius, subPixelCountSqrt)
-    private val fractal = juliaSet // mandelbrotSet, juliaSet
+    private val pointCalculator = DoublePointCalculator(maxIterations, escapeRadius)
 
-    private var matrix = if (fractal.type == FractalType.MANDELBROT_SET)
-        DoubleMatrix(w, h, -0.75, 0.0, max(2.7 / h, 4.7 / w))
+    private var matrix = if (fractalType == FractalType.MANDELBROT_SET)
+        DoubleMatrix(w, h, -0.75, 0.0, max(2.7 / h, 4.7 / w), subPixelCountSqrt)
     else
-        DoubleMatrix(w, h, 0.0, 0.0, max(2.7 / h, 4.7 / w))
+        DoubleMatrix(w, h, 0.0, 0.0, max(2.7 / h, 4.7 / w), subPixelCountSqrt)
+
+    private val juliaSetCPoint = MatrixPoint(-0.77, 0.13)
+
+    private val fractal = if (fractalType == FractalType.MANDELBROT_SET)
+        MandelbrotSet(matrix, pointCalculator)
+    else
+        JuliaSet(matrix, pointCalculator, juliaSetCPoint)
+
 
     // Interesting C points for Julia Set
 //    Pair(-0.8, 0.156) // (blending factor > 300)
@@ -109,14 +117,14 @@ object MandelbrotApp {
         val rowsPerCoroutine = ceil(h.toDouble() / noOfCoroutines).toInt()
         repeat(noOfCoroutines) { i ->
             val start = i * rowsPerCoroutine
-            val end = min((i + 1) * rowsPerCoroutine, h)
+            val end = min(start + rowsPerCoroutine, h)
             jobs += GlobalScope.launch(Dispatchers.Default) {
                 for (y in start until end) { // start to end -1
                     for (x in 0 until w) { // 0 to w -1
                         // If the point is within the set (ie: already calculated), no need to re-calculate
                         if (matrix.get(x, y) != ColorCoder.INSIDE_COLOR) {
-                            val rangeForPoint = matrix.pixelToRange(x, y)
-                            fractal.calculatePoint(rangeForPoint) { matrix.set(x, y, toColor(it)) }
+                            val result = fractal.calculatePixel(x, y)
+                            matrix.set(x, y, toColor(result)) //TODO
                         }
                     }
                 }
@@ -127,19 +135,19 @@ object MandelbrotApp {
         jobs.forEach { it.join() }
     }
 
-    private fun toColor(r: Result): Int {
-        return colorCoders[colorCoderIndex].toRGB(r)
+    private fun toColor(result: PointResult<Double>): Int {
+        return colorCoders[colorCoderIndex].toRGB(result)
     }
 
     private fun doCalculateAndRender() {
-        val timer = MyTimer("Mandelbrot")
+        val timer = MyTimer("Fractal")
         renderer.indicateBusy(true)
 
         doParallelCalculations()
-        timer.tick("Calculation")
+        timer.logDelta("Calculation")
 
         renderer.render(matrix)
-        timer.tick("Render")
+        timer.logDelta("Render")
 
         renderer.indicateBusy(false)
     }
@@ -166,7 +174,7 @@ object MandelbrotApp {
         val midY = (y1 + y2) / 2
         val pixelSize = max((x2 - x1) / matrix.widthInPixels, (y1 - y2) / matrix.heightInPixels)
 
-        matrix = DoubleMatrix(matrix.widthInPixels, matrix.heightInPixels, midX, midY, pixelSize)
+        matrix = DoubleMatrix(matrix.widthInPixels, matrix.heightInPixels, midX, midY, pixelSize, subPixelCountSqrt)
         zoomFactor++
 
         println("┈┈┈┈┈┈┈┈┈[ Zoom: ${zoomFactor} X, Magnification: ${4.0.pow(zoomFactor)} X ]┈┈┈┈┈┈┈┈┈")

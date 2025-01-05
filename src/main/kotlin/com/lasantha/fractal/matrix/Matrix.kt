@@ -1,13 +1,14 @@
-@file:Suppress("unused")
-
 package com.lasantha.fractal.matrix
 
-interface Matrix<out R : Number, T> {
+interface Matrix<R : Number, T> {
     val widthInPixels: Int // Integer width of matrix, > 0
     val heightInPixels: Int // Integer height of matrix, > 0
     val midX: R // X of middle point in the range
     val midY: R // Y of middle point in the range
     val rangePixelSize: R // Single pixel size represented in the range
+    // Number of sub-pixel to calculate per each direction to reduce antialiasing.
+    // This will result in a point count that equals the square of this number.
+    val subPixelCountSqrt: Int
 
     /**
      * xPixel: 0 to pixelWidth - 1
@@ -36,6 +37,8 @@ interface Matrix<out R : Number, T> {
     }
 
     fun pixelToRange(xPixel: Int, yPixel: Int): MatrixRange<R>
+
+    fun pixelToSubPoints(xPixel: Int, yPixel: Int): Array<MatrixPoint<R>>
 }
 
 /**
@@ -45,3 +48,5 @@ interface Matrix<out R : Number, T> {
  * y2: smallest possible y value for the range
  */
 data class MatrixRange<out R : Number>(val x1: R, val x2: R, val y1: R, val y2: R)
+
+data class MatrixPoint<out R : Number>(val x: R, val y: R)

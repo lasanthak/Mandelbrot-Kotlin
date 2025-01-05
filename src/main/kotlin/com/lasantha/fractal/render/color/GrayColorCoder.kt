@@ -1,6 +1,6 @@
 package com.lasantha.fractal.render.color
 
-import com.lasantha.fractal.calculate.Result
+import com.lasantha.fractal.calculate.PointResult
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.ln
@@ -13,12 +13,12 @@ import kotlin.math.round
 class GrayColorCoder(override val maxN: Int, private val blendingFactor: Double) : ColorCoder {
     private val twoPI = 2 * PI
 
-    override fun toRGB(res: Result): Int {
-        if (res.n >= maxN) {
+    override fun toRGB(result: PointResult<Double>): Int {
+        if (result.n >= maxN) {
             return ColorCoder.INSIDE_COLOR
         }
 
-        val v = ln(ln(res.rr) / 2.0.pow(res.n)) / blendingFactor
+        val v = ln(ln(result.rr) / 2.0.pow(result.n)) / blendingFactor
         val gray = round(127.5 * (1 + cos(twoPI * v))).toInt()
 
         return ColorCoder.encodeColor(gray, gray, gray)

@@ -1,6 +1,7 @@
 package com.lasantha.fractal.render.color
 
-import com.lasantha.fractal.calculate.Result
+import com.lasantha.fractal.calculate.PointResult
+import com.lasantha.fractal.matrix.MatrixPoint
 import kotlin.math.*
 
 class Simple3DColorCoder(override val maxN: Int) : ColorCoder {
@@ -11,15 +12,15 @@ class Simple3DColorCoder(override val maxN: Int) : ColorCoder {
     private val vx = cos(angleR)
     private val vy = sin(angleR)
 
-    override fun toRGB(res: Result): Int {
-        if (res.n >= maxN) {
+    override fun toRGB(result: PointResult<Double>): Int {
+        if (result.n >= maxN) {
             return ColorCoder.INSIDE_COLOR
         }
 
-        val u = div(res.z, res.der)
+        val u = div(result.z, result.der)
         val modU = modulus(u)
-        val wx = u.first / modU
-        val wy = u.second / modU
+        val wx = u.x / modU
+        val wy = u.y / modU
         val t = (wx * vx + wy * vy + h2) / h2PlusOne
 //        return interpolateColor(t, Triple(255, 234, 128)) // gold
 //        return interpolateColor(t, Triple(230,255,204)) // light green
@@ -41,17 +42,17 @@ class Simple3DColorCoder(override val maxN: Int) : ColorCoder {
     /**
      * a/b = ((a.x * b.x + a.y * b.y) + i(b.x * a.y - a.x * b.y)) / (b.x^2 + b.y^2)
      */
-    private fun div(a: Pair<Double, Double>, b: Pair<Double, Double>): Pair<Double, Double> {
-        val d = b.first * b.first + b.second * b.second
-        val x = (a.first * b.first + a.second * b.second) / d
-        val y = (b.first * a.second - a.first * b.second) / d
-        return Pair(x, y)
+    private fun div(a: MatrixPoint<Double>, b: MatrixPoint<Double>): MatrixPoint<Double> {
+        val d = b.x * b.x + b.y * b.y
+        val x = (a.x * b.x + a.y * b.y) / d
+        val y = (b.x * a.y - a.x * b.y) / d
+        return MatrixPoint(x, y)
     }
 
     /**
      * |a| = sqrt(a.x^2 + a.y^2)
      */
-    private fun modulus(a: Pair<Double, Double>): Double {
-        return sqrt(a.first * a.first + a.second * a.second)
+    private fun modulus(a: MatrixPoint<Double>): Double {
+        return sqrt(a.x * a.x + a.y * a.y)
     }
 }

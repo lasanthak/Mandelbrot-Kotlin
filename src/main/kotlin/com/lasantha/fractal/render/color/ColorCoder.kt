@@ -1,6 +1,6 @@
 package com.lasantha.fractal.render.color
 
-import com.lasantha.fractal.calculate.Result
+import com.lasantha.fractal.calculate.PointResult
 
 /**
  * The sRGB integer encodes RGB components into a single integer.
@@ -16,7 +16,7 @@ interface ColorCoder {
     /**
      * Returns the RGB encoded integer for the color
      */
-    fun toRGB(res: Result): Int
+    fun toRGB(result: PointResult<Double>): Int
 
     companion object {
         // 00000000,11111111,00000000,00000000
