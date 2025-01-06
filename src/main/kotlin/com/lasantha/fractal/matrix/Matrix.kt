@@ -1,14 +1,8 @@
 package com.lasantha.fractal.matrix
 
 interface Matrix<R : Number, T> {
-    val widthInPixels: Int // Integer width of matrix, > 0
-    val heightInPixels: Int // Integer height of matrix, > 0
-    val midX: R // X of middle point in the range
-    val midY: R // Y of middle point in the range
-    val rangePixelSize: R // Single pixel size represented in the range
-    // Number of sub-pixel to calculate per each direction to reduce antialiasing.
-    // This will result in a point count that equals the square of this number.
-    val subPixelCountSqrt: Int
+    val width: Int // Integer width of matrix, > 0
+    val height: Int // Integer height of matrix, > 0
 
     /**
      * xPixel: 0 to pixelWidth - 1
@@ -29,24 +23,36 @@ interface Matrix<R : Number, T> {
      * value: any Int value stored in that location
      */
     fun forEach(f: (value: T, xPixel: Int, yPixel: Int) -> Unit) {
-        for (y in 0 until heightInPixels) {
-            for (x in 0 until widthInPixels) {
+        for (y in 0 until height) {
+            for (x in 0 until width) {
                 f(get(x, y), x, y)
             }
         }
     }
 
-    fun pixelToRange(xPixel: Int, yPixel: Int): MatrixRange<R>
+    fun pixelMidPoint(xPixel: Int, yPixel: Int, midPointSquare: MapSquare<R>): MapPoint<R>
 
-    fun pixelToSubPoints(xPixel: Int, yPixel: Int): Array<MatrixPoint<R>>
+    fun pixelSubPoints(xPixel: Int, yPixel: Int, midPointSquare: MapSquare<R>): Array<MapPoint<R>>
 }
 
 /**
- * x1: smallest possible x value for the range
- * x2: largest possible x value for the range
- * y1: largest possible y value for the range
- * y2: smallest possible y value for the range
+ * @param x - X value of the point
+ * @param y - Y value of the point
  */
-data class MatrixRange<out R : Number>(val x1: R, val x2: R, val y1: R, val y2: R)
+data class MapPoint<out R : Number>(val x: R, val y: R)
 
-data class MatrixPoint<out R : Number>(val x: R, val y: R)
+/**
+ * @param midPoint - Mid-point of the square
+ * @param topLeftPoint - Top-left point of the square
+ * @param size - Length of a side
+ * @param subPixelCountSqrt - Number of sub-pixel to calculate per each direction to reduce antialiasing.
+ * This will result in a point count that equals the square of this number.
+ * @param subPixelSize - Length of a sub-pixel distance
+ */
+data class MapSquare<out R : Number>(
+    val midPoint: MapPoint<R>,
+    val topLeftPoint: MapPoint<R>,
+    val size: R,
+    val subPixelCountSqrt: Int,
+    val subPixelSize: R
+)

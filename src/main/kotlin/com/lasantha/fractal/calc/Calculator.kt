@@ -1,6 +1,6 @@
-package com.lasantha.fractal.calculate
+package com.lasantha.fractal.calc
 
-import com.lasantha.fractal.matrix.MatrixPoint
+import com.lasantha.fractal.matrix.MapPoint
 
 
 interface PointCalculator<R : Number> {
@@ -10,12 +10,12 @@ interface PointCalculator<R : Number> {
     /**
      * Starts at zero (eg: for Mandelbrot set)
      */
-    fun calculatePoint(c: MatrixPoint<R>): PointResult<R>
+    fun calculatePoint(c: MapPoint<R>): PointResult<R>
 
     /**
      * Starts at given point (eg: for Julia set)
      */
-    fun calculatePoint(start: MatrixPoint<R>, c: MatrixPoint<R>): PointResult<R>
+    fun calculatePoint(start: MapPoint<R>, c: MapPoint<R>): PointResult<R>
 }
 
 class DoublePointCalculator(
@@ -23,11 +23,16 @@ class DoublePointCalculator(
     override val escapeRadius: Double,
 ) : PointCalculator<Double> {
 
-    override fun calculatePoint(c: MatrixPoint<Double>): PointResult<Double> {
-        return calculatePoint(MatrixPoint(0.0, 0.0), c)
+    override fun calculatePoint(c: MapPoint<Double>): PointResult<Double> {
+        return calculatePoint(MapPoint(0.0, 0.0), c)
     }
 
-    override fun calculatePoint(start: MatrixPoint<Double>, c: MatrixPoint<Double>): PointResult<Double> {
+    /**
+     * Complex number Zc is in the Mandelbrot set if this is bounded for very large n, starting with Z0.
+     * Zn+1 = Zn ^ 2 + Zc
+     * See https://en.wikipedia.org/wiki/Mandelbrot_set
+     */
+    override fun calculatePoint(start: MapPoint<Double>, c: MapPoint<Double>): PointResult<Double> {
         val escapeRR = escapeRadius * escapeRadius
         val (xc, yc) = c
         var (x, y) = start
@@ -53,7 +58,7 @@ class DoublePointCalculator(
             rr = xx + yy
         } while (n < maxIterations && rr < escapeRR)
 
-        return PointResult(n, rr, MatrixPoint(x, y), MatrixPoint(dx, dy))
+        return PointResult(n, rr, MapPoint(x, y), MapPoint(dx, dy))
     }
 }
 
@@ -63,4 +68,4 @@ class DoublePointCalculator(
  * @param z Escape point
  * @param der Derivative
  */
-data class PointResult<R : Number>(val n: Int, val rr: R, val z: MatrixPoint<R>, val der: MatrixPoint<R>)
+data class PointResult<R : Number>(val n: Int, val rr: R, val z: MapPoint<R>, val der: MapPoint<R>)

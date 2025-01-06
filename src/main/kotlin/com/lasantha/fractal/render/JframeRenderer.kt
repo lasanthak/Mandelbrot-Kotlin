@@ -2,7 +2,9 @@
 
 package com.lasantha.fractal.render
 
+import com.lasantha.fractal.calc.PointResult
 import com.lasantha.fractal.matrix.Matrix
+import com.lasantha.fractal.render.color.ColorCoder
 import java.awt.*
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
@@ -18,7 +20,7 @@ class JFrameRenderer(
         override val width: Int,
         override val height: Int,
         override val titleText: String
-) : Renderer<Int> {
+) : Renderer<PointResult<Double>> {
 
     private val imageDimension = Dimension(width, height)
     private val windowDimension = Toolkit.getDefaultToolkit().screenSize
@@ -27,12 +29,12 @@ class JFrameRenderer(
     private var doZoomIn: ((x: Int, y: Int, w: Int, h: Int) -> Unit)? = null
     private var doReRender: (() -> Unit)? = null
 
-    override fun render(matrix: Matrix<*, Int>) {
+    override fun render(matrix: Matrix<*, PointResult<Double>>, colorCoder: ColorCoder) {
         val image = frame.panel.image
-        if (matrix.widthInPixels > width || matrix.heightInPixels > height) {
+        if (matrix.width > width || matrix.height > height) {
             throw IllegalArgumentException("Invalid dimensions")
         }
-        matrix.forEach { sRGBValue, x, y -> image.setRGB(x, y, sRGBValue) }
+        matrix.forEach { result, x, y -> image.setRGB(x, y, colorCoder.toRGB(result)) }
         frame.repaint()
     }
 

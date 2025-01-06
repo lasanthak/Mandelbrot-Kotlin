@@ -1,6 +1,6 @@
 package com.lasantha.fractal.render.color
 
-import com.lasantha.fractal.calculate.PointResult
+import com.lasantha.fractal.calc.PointResult
 
 class SimpleGrayColorCoder(override val maxN: Int) : ColorCoder {
 

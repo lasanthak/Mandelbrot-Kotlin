@@ -1,54 +1,53 @@
 package com.lasantha.fractal.matrix
 
-class DoubleMatrix(
-    override val widthInPixels: Int,
-    override val heightInPixels: Int,
-    override val midX: Double,
-    override val midY: Double,
-    override val rangePixelSize: Double,
-    override val subPixelCountSqrt: Int
-) : Matrix<Double, Int> {
+import com.lasantha.fractal.calc.PointResult
 
-    private val topX = midX - rangePixelSize * widthInPixels / 2
-    private val topY = midY + rangePixelSize * heightInPixels / 2
+class DoubleMatrix(override val width: Int, override val height: Int) : Matrix<Double, PointResult<Double>> {
 
-    private val data = Array(heightInPixels) { IntArray(widthInPixels) } // data[y][x]
+    companion object {
+        fun toMapSquare(midPoint: MapPoint<Double>, size: Double, subPixelCountSqrt: Int = 1): MapSquare<Double> {
+            val halfSize = size / 2.0
+            val topLeftPoint = MapPoint(midPoint.x - halfSize, midPoint.y + halfSize)
+            val subPixSize = size / subPixelCountSqrt
+            return MapSquare(midPoint, topLeftPoint, size, subPixelCountSqrt, subPixSize)
+        }
+    }
 
-    override fun get(xPixel: Int, yPixel: Int): Int {
+    private val halfWidth = width / 2.0
+    private val halfHeight = height / 2.0
+
+    private val dummyResult = PointResult(0, 0.0, MapPoint(0.0, 0.0), MapPoint(0.0, 0.0))
+    private val data = Array(height) { Array(width) { dummyResult } } // data[y][x]
+
+    override fun get(xPixel: Int, yPixel: Int): PointResult<Double> {
         return data[yPixel][xPixel]
     }
 
-    override fun set(xPixel: Int, yPixel: Int, value: Int) {
+    override fun set(xPixel: Int, yPixel: Int, value: PointResult<Double>) {
         data[yPixel][xPixel] = value
     }
 
-    override fun pixelToRange(xPixel: Int, yPixel: Int): MatrixRange<Double> {
-        val x1 = topX + (rangePixelSize * xPixel)
-        val x2 = x1 + rangePixelSize
-        val y1 = topY - (rangePixelSize * yPixel)
-        val y2 = y1 - rangePixelSize
-        return MatrixRange(x1, x2, y1, y2)
-    }
+    override fun pixelMidPoint(xPixel: Int, yPixel: Int, midPointSquare: MapSquare<Double>) = MapPoint(
+        x = midPointSquare.midPoint.x - midPointSquare.size * (halfWidth - xPixel.toDouble()),
+        y = midPointSquare.midPoint.y + midPointSquare.size * (halfHeight - yPixel.toDouble())
+    )
 
-    override fun pixelToSubPoints(xPixel: Int, yPixel: Int): Array<MatrixPoint<Double>> {
-        val range = pixelToRange(xPixel, yPixel)
+    override fun pixelSubPoints(xPixel: Int, yPixel: Int, midPointSquare: MapSquare<Double>): Array<MapPoint<Double>> {
+        val xOffset = midPointSquare.topLeftPoint.x - midPointSquare.size * (halfWidth - xPixel.toDouble())
+        val yOffset = midPointSquare.topLeftPoint.y + midPointSquare.size * (halfHeight - yPixel.toDouble())
+        val n = midPointSquare.subPixelCountSqrt
+        val d = midPointSquare.subPixelSize
+        val halfD = midPointSquare.subPixelSize / 2.0
 
-        val xPixW = (range.x2 - range.x1) / subPixelCountSqrt
-        val yPixH = (range.y1 - range.y2) / subPixelCountSqrt
-
-        val xMarkerMidPoints = DoubleArray(subPixelCountSqrt)
-        val yMarkerMidPoints = DoubleArray(subPixelCountSqrt)
-        xMarkerMidPoints[0] = range.x1 + xPixW / 2.0
-        yMarkerMidPoints[0] = range.y1 - yPixH / 2.0
-        for (a in 1 until subPixelCountSqrt) {
-            xMarkerMidPoints[a] = xMarkerMidPoints[a - 1] + xPixW
-            yMarkerMidPoints[a] = yMarkerMidPoints[a - 1] - yPixH
+        val xMarkerMidPoints = DoubleArray(n)
+        val yMarkerMidPoints = DoubleArray(n)
+        xMarkerMidPoints[0] = xOffset + halfD
+        yMarkerMidPoints[0] = yOffset - halfD
+        for (a in 1 until n) {
+            xMarkerMidPoints[a] = xMarkerMidPoints[a - 1] + d
+            yMarkerMidPoints[a] = yMarkerMidPoints[a - 1] - d
         }
 
-        return Array(subPixelCountSqrt * subPixelCountSqrt) {
-            val i = it / subPixelCountSqrt
-            val j = it % subPixelCountSqrt
-            MatrixPoint(xMarkerMidPoints[i], yMarkerMidPoints[j])
-        }
+        return Array(n * n) { MapPoint(xMarkerMidPoints[it / n], yMarkerMidPoints[it % n]) }
     }
 }

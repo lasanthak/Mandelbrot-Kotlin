@@ -1,7 +1,7 @@
 package com.lasantha.fractal.render.color
 
-import com.lasantha.fractal.calculate.PointResult
-import com.lasantha.fractal.matrix.MatrixPoint
+import com.lasantha.fractal.calc.PointResult
+import com.lasantha.fractal.matrix.MapPoint
 import kotlin.math.*
 
 class Simple3DColorCoder(override val maxN: Int) : ColorCoder {
@@ -42,17 +42,17 @@ class Simple3DColorCoder(override val maxN: Int) : ColorCoder {
     /**
      * a/b = ((a.x * b.x + a.y * b.y) + i(b.x * a.y - a.x * b.y)) / (b.x^2 + b.y^2)
      */
-    private fun div(a: MatrixPoint<Double>, b: MatrixPoint<Double>): MatrixPoint<Double> {
+    private fun div(a: MapPoint<Double>, b: MapPoint<Double>): MapPoint<Double> {
         val d = b.x * b.x + b.y * b.y
         val x = (a.x * b.x + a.y * b.y) / d
         val y = (b.x * a.y - a.x * b.y) / d
-        return MatrixPoint(x, y)
+        return MapPoint(x, y)
     }
 
     /**
      * |a| = sqrt(a.x^2 + a.y^2)
      */
-    private fun modulus(a: MatrixPoint<Double>): Double {
+    private fun modulus(a: MapPoint<Double>): Double {
         return sqrt(a.x * a.x + a.y * a.y)
     }
 }

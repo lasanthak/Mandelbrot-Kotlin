@@ -1,6 +1,6 @@
 package com.lasantha.fractal.render.color
 
-import com.lasantha.fractal.calculate.PointResult
+import com.lasantha.fractal.calc.PointResult
 
 /**
  * The sRGB integer encodes RGB components into a single integer.

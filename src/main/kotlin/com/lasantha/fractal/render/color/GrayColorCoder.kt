@@ -1,6 +1,6 @@
 package com.lasantha.fractal.render.color
 
-import com.lasantha.fractal.calculate.PointResult
+import com.lasantha.fractal.calc.PointResult
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.ln
