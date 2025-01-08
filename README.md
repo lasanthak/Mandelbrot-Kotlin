@@ -15,3 +15,9 @@ Simple library to generate fractal images using Kotlin. And there is a sample im
 ![1920 x 1080](/samples/1554608965085.png)
 
 ![1920 x 1080](/samples/1554660083734.png)
+
+![1920 x 1080](samples/1736378382629.png)
+
+![1920 x 1080](samples/1736379067986.png)
+
+![1920 x 1080](samples/1736379072325.png)
