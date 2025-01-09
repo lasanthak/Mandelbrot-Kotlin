@@ -33,20 +33,18 @@ object MandelbrotApp {
     private var zoomFactor = 1
     private const val blendingFactor = 7.5 //111.0, 7.389 (e^2), 6.7, 5.45656 (2e), 4.3, 2.71828 (e)
 
-    private const val w = 1920
-    //    private const val w = 2880
-    private const val h = 1080
-//    private const val h = 1800v
+    private const val w = 1920 // 1920, 2880, 3840
+    private const val h = 1080 // 1080, 1800, 2160
 
     private val matrix = DoubleMatrix(w, h)
     private val pointCalculator = DoublePointCalculator(maxIterations, escapeRadius)
 
-    private val fractalType = FractalType.MANDELBROT_SET
+    private val fractalType = FractalType.JULIA_SET
 
     private val fractal = if (fractalType == FractalType.MANDELBROT_SET)
         MandelbrotSet(matrix, pointCalculator)
     else
-        JuliaSet(matrix, pointCalculator, c = MapPoint(-0.77, 0.13))
+        JuliaSet(matrix, pointCalculator, c = MapPoint(-0.835, -0.2321))
 
     private val startingMidPoint =
         if (fractalType == FractalType.MANDELBROT_SET) MapPoint(-0.75, 0.0) else MapPoint(0.0, 0.0)
@@ -54,14 +52,20 @@ object MandelbrotApp {
 
     // Interesting C points for Julia Set
     //  (-0.8, 0.156) // (blending factor > 300)
+    //  (-0.835, -0.2321)
     //  (-0.7269, 0.1889)
     //  (-0.4, 0.6)
+    //  (-0.4, -0.59)
     //  (-0.8, 0.156)
     //  (0.285, 0.01)
     //  (-0.74543, 0.11301) // (blending factor > 212) *
     //  (-0.77, 0.13)
     //  (-0.1, 0.651)
     //  (0.235, 0.01)
+    //  (0.35, 0.35)
+    //  (0.4, 0.4)
+    //  (-0.54, 0.54)
+    //  (0.28, 0.008)
 
     //private var midPointSquare = toMapSquare(MapPoint(-1.1613719455979288, 0.29056722398498075), 5.82076670813731E-13, subPixelCountSqrt)
     // Interesting areas of Mandelbrot Set
