@@ -31,7 +31,7 @@ object MandelbrotApp {
     private const val subPixelCountSqrt = 3 // 1 for just midpoint, 2 for 4 point, 3 for 9 points, etc.
 
     private var zoomFactor = 1
-    private const val blendingFactor = 7.5 //111.0, 7.389 (e^2), 6.7, 5.45656 (2e), 4.3, 2.71828 (e)
+    private const val blendingFactor = 5.45656 //111.0, 7.389 (e^2), 6.7, 5.45656 (2e), 4.3, 2.71828 (e)
 
     private const val w = 1920 // 1920, 2880, 3840
     private const val h = 1080 // 1080, 1800, 2160
@@ -39,7 +39,7 @@ object MandelbrotApp {
     private val matrix = DoubleMatrix(w, h)
     private val pointCalculator = DoublePointCalculator(maxIterations, escapeRadius)
 
-    private val fractalType = FractalType.JULIA_SET
+    private val fractalType = FractalType.MANDELBROT_SET
 
     private val fractal = if (fractalType == FractalType.MANDELBROT_SET)
         MandelbrotSet(matrix, pointCalculator)
@@ -99,9 +99,9 @@ object MandelbrotApp {
     //   (-1.1613719455979288, 0.29056722398498075), 5.82076670813731E-13
 
     private val colorCoders = listOf(
+        SimpleGrayColorCoder(maxIterations),
         Simple3DColorCoder(maxIterations),
         RGBColorCoder(maxIterations, blendingFactor),
-        SimpleGrayColorCoder(maxIterations),
         GrayColorCoder(maxIterations, blendingFactor)
     )
     private var colorCoderIndex = 0
